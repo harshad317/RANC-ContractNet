@@ -220,15 +220,23 @@ run.
 \subsection{Problem setting}
 
 Let $X_{\mathrm{train}}$ be the active training fold visible to a preprocessing
-estimator. RANC compiles a fitted policy $P$ for later validation, test, or
-deployment data using statistics from $X_{\mathrm{train}}$ and admissible
-metadata only. Metadata may include feature groups, temporal context, sparse
-flags, and user contracts, but not validation/test outcomes for scaler choice.
+estimator. For each feature or feature group $g$, RANC receives a tuple
+$(X_{\mathrm{train}}, y_{\mathrm{train}}, M_{\mathrm{train}}, K_g)$, where
+$M_{\mathrm{train}}$ contains admissible metadata such as feature groups,
+temporal context, sparse flags, and user contracts. Labels may be used only when
+the contract admits supervised evidence, and that use is recorded in the signal
+risk ledger. Validation/test outcomes are never used for scaler choice. The
+compiler instantiates a finite deterministic candidate set
+$\mathcal{F}_g$, fits candidate parameters from admitted training evidence only,
+rejects hard-clause violations, and emits either a selected fitted policy
+$P_g$, a safer downgrade, or a no-op.
+
 Validation search asks which preprocessing option helped a downstream model;
 contract compilation asks which options are legal under declared invariance,
-signal, representation, and audit requirements. If a contract is underspecified,
-contradictory, or unsupported by checkers, a recorded downgrade or no-op is a
-valid compiled outcome rather than a failed search.
+signal, representation, split, inverse, and audit requirements before that
+validation score is consulted. If a contract is underspecified, contradictory,
+or unsupported by checkers, a recorded downgrade or no-op is a valid compiled
+outcome rather than a failed search.
 
 \subsection{Formal contract semantics}
 
@@ -254,9 +262,9 @@ $h\in H_g$ holds on the fitted policy over its declared domain or audit support;
 (iii) representation constraints such as implicit sparse zeros are preserved
 unless waived; (iv) required inverse error is at most
 $\epsilon_{\mathrm{inv}}$ on the audit sample; and (v) selected parameters,
-rejections, and downgrades are serializable. Legal does not mean predictively
-optimal or semantically correct; a high-scoring policy is still illegal if it
-violates a hard clause.
+random seeds, rejections, and downgrades are serializable and replayable without
+refitting. Legal does not mean predictively optimal or semantically correct; a
+high-scoring policy is still illegal if it violates a hard clause.
 
 \paragraph{Definition 4 (Signal-risk ledger).}
 The ledger $L_g$ is a set of rows
@@ -282,6 +290,18 @@ it is legal and every required test passes:
 Any required failure triggers deterministic fallback to the next simplest
 candidate, downgrade to a safer policy, or an explicit no-op with recorded
 reasons.
+
+Equivalently, the compiler forms a survivor set
+\[
+\mathcal{A}_g =
+\{f_{\theta,g}\in\mathcal{F}_g:
+\mathsf{Legal}(f_{\theta,g}; C_g,K_g)\}.
+\]
+Only policies in $\mathcal{A}_g$ are eligible for tie breaking. If
+$\mathcal{A}_g$ is empty, the compiler returns a no-op with the rejected
+candidates and failure reasons. If final falsification later fails a required
+hard clause, the same fallback path is taken and the failure remains in the
+audit.
 
 \begin{table}[t]
 \centering
@@ -315,24 +335,31 @@ Assume a finite candidate set, admissible-only fitted parameters, and
 deterministic checkers with recorded domains or audit support. If
 Algorithm~\ref{fig:ranc-algorithm} accepts $f_{\theta,g}$, then the policy used
 no forbidden fitting observations, passed every required checker on stated
-support, and produced an audit that replays the selected policy, rejections, and
-downgrades. If no admissible candidate passes, RANC returns a recorded downgrade
-or no-op rather than an unchecked policy. Proof sketch: hard-clause failures are
-rejected before tie breaking, the objective ranges only over survivors, and
-final falsification gates acceptance. The proposition is relative to the
-declared contract and checkers; it does not prove semantic truth, downstream
-optimality, or behavior outside the checked domain.
+support, and produced an audit that replays the selected policy, its fitted
+parameters, rejections, downgrades, and seed. If no admissible candidate passes,
+RANC returns a recorded downgrade or no-op rather than an unchecked policy.
+Proof sketch: candidate parameters are estimated before validation outcomes are
+visible; hard-clause failures are rejected before tie breaking; the objective
+ranges only over survivors; and final falsification gates acceptance. The
+proposition is relative to the declared contract, candidate set, and checker
+support; it does not prove semantic truth, downstream optimality, or behavior
+outside the checked domain.
 
 \subsection{Contract-to-policy compilation}
 
 Given $C_j$, $K_j$, and $L_j$, RANC ranks only candidates that satisfy the hard
-contract predicates. Among those legal candidates it solves
+contract predicates. Candidate construction is deterministic: the compiler
+enumerates primitive transforms, fits their parameters from admitted training
+evidence, attaches ledger rows for possible signal destruction, and records
+every hard-clause rejection with a reason. Among legal candidates it solves
 \[
 P_j = \arg\min_{f \in \mathcal{F}_j}
 \mathrm{complexity}(f) + \lambda_{\mathrm{audit}}\mathrm{audit\_cost}(f)
 \]
 subject to hard contract clauses, train-split-only fitted statistics, and
-passing falsification tests. The candidate family includes identity, z-score,
+passing falsification tests. In practice the objective is evaluated only on the
+survivor set $\mathcal{A}_j$; the displayed form suppresses that feasibility
+constraint for readability. The candidate family includes identity, z-score,
 robust affine, min/max, max-absolute, vector normalization, log/log1p,
 power-style monotone compression, empirical rank maps, piecewise affine maps,
 and optional whitening-style group policies.
@@ -340,10 +367,12 @@ and optional whitening-style group policies.
 The objective is a legal-policy tie breaker, not a validation-score search. If
 two policies satisfy the contract, the compiler prefers the simpler and more
 auditable one. Candidate statistics are estimated once from the active training
-fold and then replayed unchanged at validation, test, and deployment time. When
-symbolic checks are available, piecewise affine monotonicity and related hard
-constraints are checked with SMT; otherwise the audit records deterministic
-numeric verification and the resulting evidence limits.
+fold and then replayed unchanged at validation, test, and deployment time. User
+preferences can break ties only inside the survivor set, not rescue a policy
+that violates a hard clause. When symbolic checks are available, piecewise
+affine monotonicity and related hard constraints are checked with SMT; otherwise
+the audit records deterministic numeric verification and the resulting evidence
+limits.
 
 \begin{figure}[t]
 \centering
@@ -373,9 +402,19 @@ numeric verification and the resulting evidence limits.
 \subsection{Audit semantics}
 
 The fitted transformer exposes transformed data and a reviewer-facing audit
-object. The audit records regime cards, contracts, selected policies, rejected
-candidates, ledger rows, train-only evidence, downgrades, drift monitors, and
-falsification outcomes. A validation selector can report which scaler won a
+object. The audit is a typed JSON-serializable object with schema version,
+random state, feature names, fit metadata, regime cards, contracts, selected
+policies, rejected candidates, ledger rows, warnings, drift monitors embedded in
+policies, and falsification outcomes. Each policy stores its feature index,
+policy type, fitted parameters, formula, inverse legality, no-op status,
+complexity, audit cost, downgrade reason, fitted sample count, seed, and local
+candidate rejections.
+
+Replay means that a serialized transformer can be reconstructed and applied to
+new validation, test, or deployment data without recomputing regime cards or
+refitting policy statistics. The audit does not certify semantic truth; it
+certifies what was checked, on what support, with which fitted parameters, and
+which alternatives failed. A validation selector can report which scaler won a
 metric; RANC reports why the selected transform was legal under the declared
 invariances, or why it was downgraded to a safer policy.
 
