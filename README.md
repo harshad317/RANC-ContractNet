@@ -13,7 +13,7 @@ as an exploratory extension.
 
 - Branch: `main`
 - Current artifact release:
-  [paper-revision-draft-2026-06-03-v3](https://github.com/harshad317/RANC-ContractNet/releases/tag/paper-revision-draft-2026-06-03-v3)
+  [paper-revision-draft-2026-06-03-v4](https://github.com/harshad317/RANC-ContractNet/releases/tag/paper-revision-draft-2026-06-03-v4)
 - License: MIT
 - Citation metadata: `CITATION.cff`
 - DOI status: pending; `.zenodo.json` is included for a future Zenodo archive
@@ -148,9 +148,7 @@ stdout/stderr tails, expected artifact checks, and a pass/fail summary. Use
 `--tier 2` for synthetic artifact regeneration, `--tier 3` for network-dependent
 OpenML regeneration, `--tier render` for optional PDF compilation,
 `--tier package` for zip hygiene, `--tier dryrun` for a clean extracted-bundle
-reviewer simulation, or `--tier all` for the full reviewer sequence. The
-anonymous submission path also supports `--tier render_anonymous`,
-`--tier package_anonymous`, and `--tier dryrun_anonymous`.
+reviewer simulation, or `--tier all` for the full reviewer sequence.
 
 ```bash
 python3 experiments/package_artifact.py
@@ -165,8 +163,8 @@ outputs, and pass/fail criteria. The packager excludes caches, bytecode, raw
 OpenML run folders, raw dataset-like files, local source PDFs, local smoke-test
 outputs under `outputs/smoke/`, local validation reports under
 `outputs/review_check/` and `outputs/artifact_dry_run/`, and per-seed outlier
-audit dumps, then runs an anonymization sanity check for local
-path/user tokens. The generated `outputs/paper_render/main.pdf` is included only when the
+audit dumps, then runs a package hygiene sanity check for local path/user
+tokens. The generated `outputs/paper_render/main.pdf` is included only when the
 render tier has produced it; generated preview PNGs under
 `outputs/paper_render/preview/` are included when present.
 
@@ -180,18 +178,6 @@ This validates the zip from a clean extraction, reruns Tier 1 and the render
 tier inside the extracted copy, and writes a local
 `outputs/artifact_dry_run/extracted_bundle_report.md`. The report is kept
 outside the zip to avoid changing the hash it validates.
-
-For a double-blind submission artifact:
-
-```bash
-python3 scripts/review_check.py --tier render_anonymous
-python3 experiments/package_artifact.py --identity-mode anonymous
-python3 scripts/review_check.py --tier dryrun_anonymous
-```
-
-This writes `dist/ranc_contractnet_neurips2027_artifact_anonymous.zip`, maps the
-anonymous rendered PDF to `outputs/paper_render/main.pdf` inside the zip, and
-scans for author, affiliation, role-title, email, and local-path leaks.
 
 Before treating the project as preprint- or submission-ready, read
 `paper/neurips2027/submission_readiness.md`. It maps validated artifacts, claim
@@ -212,15 +198,14 @@ If you use RANC-ContractNet, cite the software artifact:
   year = {2026},
   version = {0.1.0},
   url = {https://github.com/harshad317/RANC-ContractNet},
-  note = {Artifact release: paper-revision-draft-2026-06-03-v3}
+  note = {Artifact release: paper-revision-draft-2026-06-03-v4}
 }
 ```
 
-The current artifact release attaches identified and anonymous supplementary
-bundles with SHA-256 sidecars and supersedes
-`paper-revision-draft-2026-06-03-v2` after metadata synchronization. A DOI
-should be minted from Zenodo after the next stable release or preprint
-checkpoint.
+The current artifact release attaches the supplementary bundle with a SHA-256
+sidecar and supersedes `paper-revision-draft-2026-06-03-v3` after simplifying
+the paper and artifact identity path. A DOI should be minted from Zenodo after
+the next stable release or preprint checkpoint.
 
 ## License
 

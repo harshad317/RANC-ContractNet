@@ -31,16 +31,13 @@ Then rerun:
 
 ```bash
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier render
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier render_anonymous
 python3 -m pytest
 python3 scripts/review_check.py --tier package
-python3 scripts/review_check.py --tier package_anonymous
 ```
 
 ## Official-Style Checklist
 
 - Confirm the render report says `Style mode: official_neurips_2027`.
-- Confirm the anonymous render and anonymous bundle still pass before submission.
 - Recheck page count under the official style.
 - Recheck all imported result tables for overfull boxes, clipping, or unreadable
   text.

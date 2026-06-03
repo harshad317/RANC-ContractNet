@@ -151,9 +151,7 @@ stdout/stderr tails, expected artifact checks, and pass/fail summary. Use
 `--tier 2`, `--tier 3`, `--tier render`, `--tier package`, `--tier dryrun`, or
 `--tier all` for synthetic regeneration, OpenML regeneration, optional PDF
 render checking, bundle hygiene, extracted-bundle reviewer simulation, or the
-full reviewer sequence. Anonymous submission checks are available through
-`--tier render_anonymous`, `--tier package_anonymous`, and
-`--tier dryrun_anonymous`.
+full reviewer sequence.
 
 ```bash
 python3 scripts/review_check.py --tier render
@@ -193,20 +191,6 @@ sidecar hash and in-bundle `SHA256SUMS`, runs Tier 1 and the render tier from
 inside the extracted copy, and writes
 `outputs/artifact_dry_run/extracted_bundle_report.md/json`. That report remains
 outside the zip so the artifact hash is stable after validation.
-
-For the double-blind submission bundle:
-
-```bash
-python3 scripts/review_check.py --tier render_anonymous
-python3 experiments/package_artifact.py --identity-mode anonymous
-python3 scripts/review_check.py --tier dryrun_anonymous
-```
-
-This creates and validates
-`dist/ranc_contractnet_neurips2027_artifact_anonymous.zip`. The anonymous
-packager maps the anonymous rendered PDF to `outputs/paper_render/main.pdf`
-inside the zip and scans for author, affiliation, role-title, email, and local
-path/user leaks.
 
 ## Full Tabular Runs
 

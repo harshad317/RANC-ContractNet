@@ -15,7 +15,6 @@ from typing import Iterable, List, Sequence
 
 BUNDLE_STEM = "ranc_contractnet_neurips2027_artifact"
 DEFAULT_OUTPUT = Path("dist") / f"{BUNDLE_STEM}.zip"
-ANONYMOUS_OUTPUT = Path("dist") / f"{BUNDLE_STEM}_anonymous.zip"
 ZIP_TIMESTAMP = (2026, 1, 1, 0, 0, 0)
 
 ROOT_FILES = [
@@ -66,33 +65,6 @@ FORBIDDEN_CONTENT_TOKENS = {
     "/" + "Users" + "/",
     "hpu" + "4454",
 }
-AUTHOR_NAME = "".join(["Har", "shad ", "Hem", "ant ", "Pat", "il"])
-AUTHOR_ORG = "".join(["Spring", "er ", "Nat", "ure"])
-AUTHOR_ROLE_TITLE = "".join(["Lead ", "Data ", "Scientist"])
-AUTHOR_ROLE = f"{AUTHOR_ROLE_TITLE}, {AUTHOR_ORG}"
-AUTHOR_EMAIL = "".join(["hh", "patil", "001", "@", "gmail", ".com"])
-AUTHOR_FAMILY_NAME = "".join(["Pat", "il"])
-AUTHOR_GIVEN_NAMES = "".join(["Har", "shad ", "Hem", "ant"])
-AUTHOR_REVERSED_NAME = f"{AUTHOR_FAMILY_NAME}, {AUTHOR_GIVEN_NAMES}"
-GITHUB_USER = "".join(["har", "shad", "317"])
-REPOSITORY_URL = f"https://github.com/{GITHUB_USER}/RANC-ContractNet"
-RELEASE_URL = f"{REPOSITORY_URL}/releases/tag/artifact-local-draft-2026-06-03"
-IDENTITY_REPLACEMENTS = {
-    RELEASE_URL: "https://anonymous.example.org/ranc-contractnet/releases/artifact-local-draft-2026-06-03",
-    REPOSITORY_URL: "https://anonymous.example.org/ranc-contractnet",
-    AUTHOR_NAME: "Anonymous Author",
-    AUTHOR_REVERSED_NAME: "Anonymous Author",
-    AUTHOR_GIVEN_NAMES: "Anonymous",
-    AUTHOR_FAMILY_NAME: "Author",
-    AUTHOR_ROLE: "Anonymous Institution",
-    AUTHOR_ROLE_TITLE: "Anonymous Role",
-    AUTHOR_ORG: "Anonymous Institution",
-    AUTHOR_EMAIL: "anonymous@example.org",
-    GITHUB_USER: "anonymous",
-}
-IDENTITY_MODES = {"identified", "anonymous"}
-
-
 @dataclass(frozen=True)
 class ArtifactBuildResult:
     zip_path: Path
@@ -130,7 +102,7 @@ def is_excluded_path(relative_path: Path) -> bool:
     return relative_path.suffix.lower() in {".pyc", ".pyo"}
 
 
-def is_summary_output_path(relative_path: Path, *, identity_mode: str = "identified") -> bool:
+def is_summary_output_path(relative_path: Path) -> bool:
     parts = relative_path.parts
     if not parts or parts[0] != "outputs":
         return False
@@ -140,27 +112,20 @@ def is_summary_output_path(relative_path: Path, *, identity_mode: str = "identif
         return False
     if len(parts) >= 2 and parts[1] == "smoke":
         return False
-    if identity_mode == "anonymous":
+    if len(parts) >= 2 and parts[1] == "paper_render":
         if relative_path in {
             Path("outputs/paper_render/main.pdf"),
             Path("outputs/paper_render/paper_render_report.md"),
             Path("outputs/paper_render/paper_render_report.json"),
         }:
-            return False
-        if len(parts) >= 3 and parts[:3] == ("outputs", "paper_render", "preview"):
-            return False
-    if relative_path in {
-        Path("outputs/paper_render/main.pdf"),
-        Path("outputs/paper_render/main_anonymous.pdf"),
-    }:
-        return True
-    if (
-        len(parts) == 4
-        and parts[:2] == ("outputs", "paper_render")
-        and parts[2] in {"preview", "preview_anonymous"}
-        and relative_path.suffix.lower() == ".png"
-    ):
-        return True
+            return True
+        if (
+            len(parts) == 4
+            and parts[:3] == ("outputs", "paper_render", "preview")
+            and relative_path.suffix.lower() == ".png"
+        ):
+            return True
+        return False
     if "runs" in parts:
         return False
     if len(parts) != 3:
@@ -193,8 +158,6 @@ def _iter_files(path: Path, root: Path) -> Iterable[Path]:
 def collect_artifact_files(
     root: Path,
     include_outputs: bool = True,
-    *,
-    identity_mode: str = "identified",
 ) -> List[Path]:
     root = root.resolve()
     files = set()
@@ -212,7 +175,7 @@ def collect_artifact_files(
                 if not candidate.is_file() or candidate.is_symlink():
                     continue
                 relative = _relative(candidate, root)
-                if is_summary_output_path(relative, identity_mode=identity_mode):
+                if is_summary_output_path(relative):
                     files.add(relative)
     return sorted(files, key=lambda item: item.as_posix())
 
@@ -222,23 +185,6 @@ def validate_required_paths(root: Path) -> None:
     if missing:
         joined = ", ".join(missing)
         raise FileNotFoundError(f"Cannot build artifact; missing required paths: {joined}")
-
-
-def validate_identity_outputs(root: Path, *, include_outputs: bool, identity_mode: str) -> None:
-    if identity_mode != "anonymous" or not include_outputs:
-        return
-    required = [
-        Path("outputs/paper_render/main_anonymous.pdf"),
-        Path("outputs/paper_render/paper_render_report_anonymous.md"),
-        Path("outputs/paper_render/paper_render_report_anonymous.json"),
-    ]
-    missing = [path.as_posix() for path in required if not (root / path).exists()]
-    if missing:
-        joined = ", ".join(missing)
-        raise FileNotFoundError(
-            "Cannot build anonymous artifact before rendering anonymous paper variant; "
-            f"missing: {joined}"
-        )
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -253,50 +199,12 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _archive_path(relative: Path, *, identity_mode: str) -> Path:
-    if identity_mode != "anonymous":
-        return relative
-    mappings = {
-        Path("outputs/paper_render/main_anonymous.pdf"): Path("outputs/paper_render/main.pdf"),
-        Path("outputs/paper_render/paper_render_report_anonymous.md"): Path(
-            "outputs/paper_render/paper_render_report.md"
-        ),
-        Path("outputs/paper_render/paper_render_report_anonymous.json"): Path(
-            "outputs/paper_render/paper_render_report.json"
-        ),
-    }
-    if relative in mappings:
-        return mappings[relative]
-    parts = relative.parts
-    if (
-        len(parts) == 4
-        and parts[:3] == ("outputs", "paper_render", "preview_anonymous")
-        and relative.suffix.lower() == ".png"
-    ):
-        name = relative.name.replace("main_anonymous", "main").replace("_anonymous", "")
-        return Path("outputs/paper_render/preview") / name
-    return relative
-
-
-def _packaged_bytes(root: Path, relative: Path, *, identity_mode: str) -> bytes:
-    data = (root / relative).read_bytes()
-    if identity_mode != "anonymous":
-        return data
-    try:
-        text = data.decode("utf-8")
-    except UnicodeDecodeError:
-        return data
-    for source, replacement in IDENTITY_REPLACEMENTS.items():
-        text = text.replace(source, replacement)
-    return text.encode("utf-8")
-
-
-def _packaged_files(root: Path, relative_files: Sequence[Path], *, identity_mode: str) -> List[PackagedFile]:
+def _packaged_files(root: Path, relative_files: Sequence[Path]) -> List[PackagedFile]:
     packaged = [
         PackagedFile(
             source_path=relative,
-            archive_path=_archive_path(relative, identity_mode=identity_mode),
-            data=_packaged_bytes(root, relative, identity_mode=identity_mode),
+            archive_path=relative,
+            data=(root / relative).read_bytes(),
         )
         for relative in relative_files
     ]
@@ -304,15 +212,13 @@ def _packaged_files(root: Path, relative_files: Sequence[Path], *, identity_mode
     duplicates = sorted({path for path in archive_paths if archive_paths.count(path) > 1})
     if duplicates:
         joined = ", ".join(duplicates[:10])
-        raise ValueError(f"Artifact archive path collision after identity mapping: {joined}")
+        raise ValueError(f"Artifact archive path collision: {joined}")
     return sorted(packaged, key=lambda item: item.archive_path.as_posix())
 
 
-def _scan_anonymization(packaged_files: Sequence[PackagedFile], *, identity_mode: str) -> None:
+def _scan_package_hygiene(packaged_files: Sequence[PackagedFile]) -> None:
     violations: List[str] = []
     tokens = set(FORBIDDEN_CONTENT_TOKENS)
-    if identity_mode == "anonymous":
-        tokens.update(IDENTITY_REPLACEMENTS)
     for packaged in packaged_files:
         path_text = packaged.archive_path.as_posix()
         for token in tokens:
@@ -327,7 +233,7 @@ def _scan_anonymization(packaged_files: Sequence[PackagedFile], *, identity_mode
                 violations.append(f"{path_text}: content contains {token!r}")
     if violations:
         detail = "\n".join(f"- {item}" for item in violations[:20])
-        raise ValueError(f"Anonymization sanity check failed:\n{detail}")
+        raise ValueError(f"Package hygiene sanity check failed:\n{detail}")
 
 
 def _file_records(packaged_files: Sequence[PackagedFile]) -> List[dict]:
@@ -343,7 +249,7 @@ def _file_records(packaged_files: Sequence[PackagedFile]) -> List[dict]:
     return records
 
 
-def _render_manifest(records: Sequence[dict], *, include_outputs: bool, identity_mode: str) -> str:
+def _render_manifest(records: Sequence[dict], *, include_outputs: bool) -> str:
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     total = sum(int(record["size"]) for record in records)
     lines = [
@@ -355,7 +261,6 @@ def _render_manifest(records: Sequence[dict], *, include_outputs: bool, identity
         f"- Source roots: {', '.join(SOURCE_ROOTS)}",
         f"- Root files: {', '.join(ROOT_FILES)}",
         f"- Output summaries included: {str(include_outputs)}",
-        f"- Identity mode: {identity_mode}",
         "",
         "## Hygiene Policy",
         "",
@@ -365,7 +270,6 @@ def _render_manifest(records: Sequence[dict], *, include_outputs: bool, identity
         "- Excludes raw dataset-like binary/data suffixes such as `.pq`, `.parquet`, `.npy`, and `.pkl`.",
         "- Excludes generated per-seed outlier audit dumps matching `*_seed*.*`.",
         "- Includes `outputs/paper_render/main.pdf` only when the optional render tier has produced it.",
-        "- Anonymous identity mode maps the anonymous rendered PDF to `outputs/paper_render/main.pdf` inside the zip.",
         "- Includes generated render preview PNGs under `outputs/paper_render/preview/` when present.",
         "- Excludes local validation reports under `outputs/review_check/` and `outputs/artifact_dry_run/`.",
         "- Runs an anonymization sanity check for local absolute-path/user tokens.",
@@ -474,17 +378,13 @@ def build_artifact(
     *,
     include_outputs: bool = True,
     max_size_bytes: int = 100 * 1024 * 1024,
-    identity_mode: str = "identified",
 ) -> ArtifactBuildResult:
-    if identity_mode not in IDENTITY_MODES:
-        raise ValueError(f"Unknown identity mode {identity_mode!r}; expected one of {sorted(IDENTITY_MODES)}.")
     root = root.resolve()
     output_path = output_path.resolve()
     validate_required_paths(root)
-    validate_identity_outputs(root, include_outputs=include_outputs, identity_mode=identity_mode)
-    relative_files = collect_artifact_files(root, include_outputs=include_outputs, identity_mode=identity_mode)
-    packaged_files = _packaged_files(root, relative_files, identity_mode=identity_mode)
-    _scan_anonymization(packaged_files, identity_mode=identity_mode)
+    relative_files = collect_artifact_files(root, include_outputs=include_outputs)
+    packaged_files = _packaged_files(root, relative_files)
+    _scan_package_hygiene(packaged_files)
     records = _file_records(packaged_files)
     total_uncompressed = sum(int(record["size"]) for record in records)
     if total_uncompressed > max_size_bytes:
@@ -492,13 +392,8 @@ def build_artifact(
             f"Artifact payload is {total_uncompressed} bytes, exceeding limit {max_size_bytes} bytes."
         )
 
-    manifest = _render_manifest(
-        records, include_outputs=include_outputs, identity_mode=identity_mode
-    ).encode("utf-8")
+    manifest = _render_manifest(records, include_outputs=include_outputs).encode("utf-8")
     reproduce = _render_reproduce().encode("utf-8")
-    if identity_mode == "anonymous":
-        for source, replacement in IDENTITY_REPLACEMENTS.items():
-            reproduce = reproduce.replace(source.encode("utf-8"), replacement.encode("utf-8"))
     generated = [
         ("ARTIFACT_MANIFEST.md", manifest),
         ("REPRODUCE.md", reproduce),
@@ -531,18 +426,14 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--max-size-mb", type=float, default=100.0)
     parser.add_argument("--no-outputs", action="store_true", help="Exclude generated outputs summaries.")
-    parser.add_argument("--identity-mode", choices=sorted(IDENTITY_MODES), default="identified")
     args = parser.parse_args()
-    output = args.output
-    if output is None:
-        output = ANONYMOUS_OUTPUT if args.identity_mode == "anonymous" else DEFAULT_OUTPUT
+    output = args.output or DEFAULT_OUTPUT
 
     result = build_artifact(
         Path.cwd(),
         output,
         include_outputs=not args.no_outputs,
         max_size_bytes=int(args.max_size_mb * 1024 * 1024),
-        identity_mode=args.identity_mode,
     )
     print(result.zip_path)
     print(result.sha256_path)

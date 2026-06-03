@@ -91,22 +91,6 @@ TIER_RENDER = TierSpec(
     ],
 )
 
-TIER_RENDER_ANONYMOUS = TierSpec(
-    name="render_anonymous",
-    description="Optional anonymous paper PDF render check",
-    commands=[
-        CommandSpec(
-            "paper_render_anonymous",
-            [sys.executable, "scripts/render_paper.py", "--variant", "anonymous"],
-        )
-    ],
-    expected_paths=[
-        Path("outputs/paper_render/main_anonymous.pdf"),
-        Path("outputs/paper_render/paper_render_report_anonymous.md"),
-        Path("outputs/paper_render/paper_render_report_anonymous.json"),
-    ],
-)
-
 TIER_DRYRUN = TierSpec(
     name="dryrun",
     description="Clean extracted-bundle reviewer dry run",
@@ -114,28 +98,6 @@ TIER_DRYRUN = TierSpec(
     expected_paths=[
         Path("outputs/artifact_dry_run/extracted_bundle_report.md"),
         Path("outputs/artifact_dry_run/extracted_bundle_report.json"),
-    ],
-)
-
-TIER_DRYRUN_ANONYMOUS = TierSpec(
-    name="dryrun_anonymous",
-    description="Clean extracted-bundle anonymous reviewer dry run",
-    commands=[
-        CommandSpec(
-            "artifact_dry_run_anonymous",
-            [
-                sys.executable,
-                "scripts/dry_run_artifact.py",
-                "--zip-path",
-                "dist/ranc_contractnet_neurips2027_artifact_anonymous.zip",
-                "--output-dir",
-                "outputs/artifact_dry_run_anonymous",
-            ],
-        )
-    ],
-    expected_paths=[
-        Path("outputs/artifact_dry_run_anonymous/extracted_bundle_report.md"),
-        Path("outputs/artifact_dry_run_anonymous/extracted_bundle_report.json"),
     ],
 )
 
@@ -150,33 +112,13 @@ TIER_PACKAGE = TierSpec(
     run_zip_hygiene=True,
 )
 
-TIER_PACKAGE_ANONYMOUS = TierSpec(
-    name="package_anonymous",
-    description="Anonymous supplementary bundle packaging and zip hygiene",
-    commands=[
-        CommandSpec(
-            "package_artifact_anonymous",
-            [sys.executable, "experiments/package_artifact.py", "--identity-mode", "anonymous"],
-        )
-    ],
-    expected_paths=[
-        Path("dist/ranc_contractnet_neurips2027_artifact_anonymous.zip"),
-        Path("dist/ranc_contractnet_neurips2027_artifact_anonymous.sha256"),
-    ],
-    run_zip_hygiene=True,
-    zip_path=Path("dist/ranc_contractnet_neurips2027_artifact_anonymous.zip"),
-)
-
 TIER_BY_NAME = {
     "1": TIER_1,
     "2": TIER_2,
     "3": TIER_3,
     "render": TIER_RENDER,
-    "render_anonymous": TIER_RENDER_ANONYMOUS,
     "dryrun": TIER_DRYRUN,
-    "dryrun_anonymous": TIER_DRYRUN_ANONYMOUS,
     "package": TIER_PACKAGE,
-    "package_anonymous": TIER_PACKAGE_ANONYMOUS,
 }
 
 
@@ -307,7 +249,7 @@ def check_zip_hygiene(root: Path, zip_path: Path = DEFAULT_ZIP) -> Dict[str, Any
 
 def tier_sequence(tier: str) -> List[TierSpec]:
     if tier == "all":
-        return [TIER_1, TIER_2, TIER_RENDER, TIER_RENDER_ANONYMOUS, TIER_3, TIER_PACKAGE]
+        return [TIER_1, TIER_2, TIER_RENDER, TIER_3, TIER_PACKAGE]
     return [TIER_BY_NAME[tier]]
 
 
@@ -443,11 +385,8 @@ def main() -> None:
             "2",
             "3",
             "render",
-            "render_anonymous",
             "dryrun",
-            "dryrun_anonymous",
             "package",
-            "package_anonymous",
             "all",
         ],
         default="1",

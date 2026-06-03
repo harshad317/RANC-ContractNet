@@ -16,10 +16,10 @@ The repository currently has:
 - Config-driven experiment runners for paired outlier worlds, sparse checks,
   temporal drift, ablations, synthetic benchmarks, OpenML/UCI public runs, and
   small neural pilots.
-- A paper draft with identified and anonymous render paths, paper-facing tables,
-  a generated visual summary figure, supplementary notes, reproducibility notes,
+- A paper draft with an identified render path, paper-facing tables, a generated
+  visual summary figure, supplementary notes, reproducibility notes,
   claims-boundary text, and artifact-evaluation guidance.
-- Reviewer-style package, anonymous-package, and extracted-bundle dry-run paths.
+- Reviewer-style package and extracted-bundle dry-run paths.
 
 This is not yet a final conference submission. It is a strong local artifact and
 preprint candidate once the remaining evidence and review items below are
@@ -85,17 +85,13 @@ python3 -m pytest
 python3 -m compileall src experiments scripts tests
 python3 scripts/generate_paper_figures.py
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier render
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier render_anonymous
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier package
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier package_anonymous
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier dryrun
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier dryrun_anonymous
 ```
 
-Passing these commands means the local code, paper render, figures, packages,
-anonymous package, and extracted-bundle reviewer simulation are internally
-consistent. It does not mean the research evidence is broad enough for a final
-main-track claim.
+Passing these commands means the local code, paper render, figures, package, and
+extracted-bundle reviewer simulation are internally consistent. It does not mean
+the research evidence is broad enough for a final main-track claim.
 
 ## Preprint Readiness
 
@@ -103,8 +99,8 @@ A serious preprint is realistic after:
 
 - The current validation commands pass from a clean checkout or extracted
   bundle.
-- The anonymous PDF and anonymous zip scan clean for author, email, affiliation,
-  role-title, local path, and local validation-report leakage.
+- The package hygiene checks pass for local path and local validation-report
+  leakage.
 - The paper avoids universal predictive-dominance claims.
 - The visual summary figure and main result tables are regenerated from the
   documented outputs.

@@ -1,16 +1,18 @@
 # Local Release Snapshot
 
-Snapshot target: `paper-revision-draft-2026-06-03-v3`
+Snapshot target: `paper-revision-draft-2026-06-03-v4`
 
 Status: artifact-complete local draft as of 2026-06-03. This snapshot freezes
 the current implementation, paper scaffold, generated summary artifacts,
 reviewer checks, and visually checked paper PDFs in a GitHub prerelease tag. It
-supersedes `paper-revision-draft-2026-06-03-v2` after synchronizing repository
-metadata to the corrected release checkpoint. The `v2` checkpoint itself
-superseded `paper-revision-draft-2026-06-03` after visual PDF QA of the
-generated figure assets. It is not yet an official conference submission
-because the final NeurIPS 2027 style file and submission portal requirements are
-not available in this workspace.
+supersedes `paper-revision-draft-2026-06-03-v3` after simplifying the paper and
+artifact identity path and using only affiliation, not job title, in the paper
+author block. The `v3` checkpoint synchronized repository metadata to the
+corrected release checkpoint. The `v2` checkpoint superseded
+`paper-revision-draft-2026-06-03` after visual PDF QA of the generated figure
+assets. It is not yet an official conference submission because the final
+NeurIPS 2027 style file and submission portal requirements are not available in
+this workspace.
 
 ## Included Scope
 
@@ -18,7 +20,7 @@ not available in this workspace.
 - Experiment runners and YAML configs under `experiments`.
 - Unit and integration tests under `tests`.
 - Paper source, bibliography, checklist, supplementary material, readiness map,
-  anonymous wrapper, and generated figure assets under `paper/neurips2027`.
+  and generated figure assets under `paper/neurips2027`.
 - Paper-facing summary outputs under `outputs`, including paired outlier,
   sparse, temporal drift, ablation, synthetic benchmark, and OpenML/UCI summary
   tables.
@@ -40,11 +42,8 @@ Before treating the tag as the current local draft, run:
 python3 -m pytest
 python3 -m compileall src experiments scripts tests
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier render
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier render_anonymous
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier package
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier package_anonymous
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier dryrun
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier dryrun_anonymous
 ```
 
 The package tiers generate sidecar SHA-256 files in `dist/`; those generated
@@ -59,9 +58,7 @@ domain semantics, or state-of-the-art results on every dataset. Public OpenML/UC
 results should be read as scoped execution evidence alongside the paired
 semantic stress tests and falsification artifacts.
 
-## Identity Modes
+## Author Identity
 
-The identified paper names Harshad Hemant Patil, Lead Data Scientist at Springer
-Nature, with `hhpatil001@gmail.com`. The anonymous artifact path is maintained
-separately through `main_anonymous.tex` and `package_artifact.py --identity-mode
-anonymous`.
+The paper names Harshad Hemant Patil with Springer Nature as the affiliation and
+`hhpatil001@gmail.com` as the contact email.

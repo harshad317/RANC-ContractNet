@@ -28,7 +28,7 @@ def _minimal_repo(root: Path) -> None:
     _write(root / "experiments/configs/smoke.yaml", "seed: 0\n")
     _write(root / "scripts/review_check.py", "print('review')\n")
     _write(root / "tests/test_smoke.py", "def test_smoke():\n    assert True\n")
-    _write(root / "paper/neurips2027/main.tex", "\\title{Anonymous}\n")
+    _write(root / "paper/neurips2027/main.tex", "\\title{Demo}\n")
     _write(root / "paper/neurips2027/claims_boundary.md", "# Claims Boundary\n")
     _write(root / "paper/neurips2027/artifact_eval.md", "# Artifact Evaluation Guide\n")
 
@@ -43,10 +43,6 @@ def test_artifact_packager_collects_clean_summary_payload(tmp_path):
     _write(tmp_path / "outputs/review_check/review_check_report.md", "# Local review check\n")
     _write(tmp_path / "outputs/review_check_all/review_check_report.md", "# Local full review check\n")
     _write(tmp_path / "outputs/artifact_dry_run/extracted_bundle_report.md", "# Local dry run\n")
-    _write(
-        tmp_path / "outputs/artifact_dry_run_anonymous/extracted_bundle_report.md",
-        "# Local anonymous dry run\n",
-    )
     _write(tmp_path / "outputs/smoke/metrics.csv", "local smoke output\n")
     _write(tmp_path / "outputs/other/local.pdf", "%PDF local ad hoc\n")
     _write(tmp_path / "outputs/outlier_pair/ranc_correct_noise_contract_noise_seed0.json", "{}\n")
@@ -64,7 +60,6 @@ def test_artifact_packager_collects_clean_summary_payload(tmp_path):
     assert "outputs/review_check/review_check_report.md" not in relative_files
     assert "outputs/review_check_all/review_check_report.md" not in relative_files
     assert "outputs/artifact_dry_run/extracted_bundle_report.md" not in relative_files
-    assert "outputs/artifact_dry_run_anonymous/extracted_bundle_report.md" not in relative_files
     assert "outputs/smoke/metrics.csv" not in relative_files
     assert "outputs/other/local.pdf" not in relative_files
     assert "outputs/openml/runs/task/seed_0/metrics.csv" not in relative_files
@@ -111,96 +106,10 @@ def test_artifact_packager_builds_zip_with_manifest_and_hashes(tmp_path):
         assert "/" + "Users" + "/" not in manifest
 
 
-def test_artifact_packager_anonymous_mode_scrubs_identity_and_maps_render_outputs(tmp_path):
-    _minimal_repo(tmp_path)
-    author = "".join(["Har", "shad ", "Hem", "ant ", "Pat", "il"])
-    org = "".join(["Spring", "er ", "Nat", "ure"])
-    role_title = "".join(["Lead ", "Data ", "Scientist"])
-    role_org = f"{role_title}, {org}"
-    email = "".join(["hh", "patil", "001", "@", "gmail", ".com"])
-    family_name = "".join(["Pat", "il"])
-    given_names = "".join(["Har", "shad ", "Hem", "ant"])
-    reversed_author = f"{family_name}, {given_names}"
-    cff_family = f"family-names: {family_name}"
-    cff_given = f"given-names: {given_names}"
-    repo_user = "".join(["har", "shad", "317"])
-    repo_url = f"https://github.com/{repo_user}/RANC-ContractNet"
-    anonymous_repo_url = "https://anonymous.example.org/ranc-contractnet"
-    _write(
-        tmp_path / "paper/neurips2027/main.tex",
-        f"{author}\n{role_org}\n{email}\n",
-    )
-    _write(
-        tmp_path / "pyproject.toml",
-        "[project]\n"
-        "name='demo'\n"
-        f"authors=[{{name='{author}', email='{email}'}}]\n"
-        "[project.urls]\n"
-        f"Repository='{repo_url}'\n",
-    )
-    _write(tmp_path / "README.md", f"Repo: {repo_url}\n")
-    _write(tmp_path / "LICENSE", f"Copyright (c) 2026 {author}\n")
-    _write(
-        tmp_path / "CITATION.cff",
-        "cff-version: 1.2.0\n"
-        f"repository-code: {repo_url}\n"
-        "authors:\n"
-        f"  - {cff_family}\n"
-        f"    {cff_given}\n"
-        f"    email: {email}\n"
-        f"    affiliation: {org}\n",
-    )
-    _write(
-        tmp_path / ".zenodo.json",
-        "{"
-        f"\"creators\":[{{\"name\":\"{reversed_author}\",\"affiliation\":\"{org}\"}}],"
-        f"\"related_identifiers\":[{{\"identifier\":\"{repo_url}\"}}]"
-        "}\n",
-    )
-    _write_bytes(tmp_path / "outputs/paper_render/main.pdf", f"%PDF identified {author}\n".encode("utf-8"))
-    _write_bytes(tmp_path / "outputs/paper_render/main_anonymous.pdf", b"%PDF anonymous\n")
-    _write(
-        tmp_path / "outputs/paper_render/paper_render_report_anonymous.md",
-        "# Render\n\n- Status: **passed**\n- Style mode: fallback_article\n",
-    )
-    _write(tmp_path / "outputs/paper_render/paper_render_report_anonymous.json", "{}\n")
-    _write_bytes(tmp_path / "outputs/paper_render/preview_anonymous/main_anonymous.pdf.png", b"png")
-
-    zip_path = tmp_path / "dist/artifact_anonymous.zip"
-    build_artifact(tmp_path, zip_path, identity_mode="anonymous", max_size_bytes=1024 * 1024)
-
-    with zipfile.ZipFile(zip_path) as archive:
-        names = set(archive.namelist())
-        main_tex = archive.read("ranc_contractnet_neurips2027_artifact/paper/neurips2027/main.tex").decode(
-            "utf-8"
-        )
-        pyproject = archive.read("ranc_contractnet_neurips2027_artifact/pyproject.toml").decode("utf-8")
-        packaged_pdf = archive.read("ranc_contractnet_neurips2027_artifact/outputs/paper_render/main.pdf")
-        assert "Anonymous Author" in main_tex
-        assert "Anonymous Institution" in main_tex
-        assert "anonymous@example.org" in main_tex
-        assert "Anonymous Author" in pyproject
-        assert repo_user not in pyproject
-        assert anonymous_repo_url in pyproject
-        assert b"%PDF anonymous" in packaged_pdf
-        assert "ranc_contractnet_neurips2027_artifact/outputs/paper_render/main_anonymous.pdf" not in names
-        assert "ranc_contractnet_neurips2027_artifact/outputs/paper_render/preview/main.pdf.png" in names
-        for name in names:
-            data = archive.read(name)
-            assert author.encode("utf-8") not in data
-            assert email.encode("utf-8") not in data
-            assert org.encode("utf-8") not in data
-            assert role_title.encode("utf-8") not in data
-            assert repo_user.encode("utf-8") not in data
-            assert reversed_author.encode("utf-8") not in data
-            assert cff_given.encode("utf-8") not in data
-            assert cff_family.encode("utf-8") not in data
-
-
-def test_artifact_packager_rejects_local_identity_leaks(tmp_path):
+def test_artifact_packager_rejects_local_path_leaks(tmp_path):
     _minimal_repo(tmp_path)
     local_path = "/" + "Users" + "/" + "hpu" + "4454" + "/private"
     _write(tmp_path / "README.md", f"local path: {local_path}\n")
 
-    with pytest.raises(ValueError, match="Anonymization sanity check failed"):
+    with pytest.raises(ValueError, match="Package hygiene sanity check failed"):
         build_artifact(tmp_path, tmp_path / "dist/artifact.zip")

@@ -28,16 +28,12 @@ def test_main_paper_wires_first_decisive_result():
     text = Path("paper/neurips2027/main.tex").read_text(encoding="utf-8")
     compact_text = _compact(text)
     assert "RANC-ContractNet: Auditable Normalization as Invariance Compilation" in text
-    identified_author = "Harshad Hemant Patil" in text
-    anonymous_author = "Anonymous " + "Author" in text
-    assert identified_author or anonymous_author
-    if identified_author:
-        assert "Lead Data Scientist, Springer Nature" in text
-        assert "hhpatil001@gmail.com" in text
-    else:
-        assert "Anonymous " + "Institution" in text
-        assert "anonymous" + "@example.org" in text
-    assert "Anonymous " + "Authors" not in text
+    assert "Harshad Hemant Patil" in text
+    assert "Springer Nature" in text
+    assert "Lead " + "Data Scientist" not in text
+    assert "hhpatil001@gmail.com" in text
+    assert "Anon" + "ymous " + "Author" not in text
+    assert "anon" + "ymous" + "@example.org" not in text
     assert "\\section{Related Work}" in text
     for phrase in [
         "Normalization is often treated as a preprocessing hyperparameter",
@@ -291,14 +287,14 @@ def test_paper_claims_boundary_avoids_overclaiming_language():
 
     release_snapshot = _compact((root / "release_snapshot.md").read_text(encoding="utf-8"))
     for phrase in [
-        "paper-revision-draft-2026-06-03-v3",
+        "paper-revision-draft-2026-06-03-v4",
         "artifact-complete local draft",
         "Included Scope",
         "Excluded Local Noise",
         "Validation Gate",
         "Claim Boundary",
         "does not claim universal predictive dominance",
-        "Identity Modes",
+        "Author Identity",
         "Harshad Hemant Patil",
         "hhpatil001@gmail.com",
     ]:

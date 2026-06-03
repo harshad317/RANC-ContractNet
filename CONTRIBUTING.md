@@ -38,11 +38,8 @@ For paper or artifact changes, also run the relevant reviewer tiers:
 
 ```bash
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier render
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier render_anonymous
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier package
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier package_anonymous
 PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier dryrun
-PATH="/Library/TeX/texbin:$PATH" python3 scripts/review_check.py --tier dryrun_anonymous
 ```
 
 ## Claim Discipline
@@ -59,6 +56,5 @@ Paper edits should preserve:
 - the distinction between contract compilation and validation-score scaler
   search;
 - the claims boundary in `paper/neurips2027/claims_boundary.md`;
-- the anonymous submission path through `main_anonymous.tex`;
 - reproducibility instructions in `paper/neurips2027/reproducibility.md`; and
 - artifact validation expectations in `paper/neurips2027/artifact_eval.md`.

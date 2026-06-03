@@ -78,19 +78,6 @@ def test_review_check_exposes_render_tier():
     assert Path("outputs/paper_render/paper_render_report.json") in tier.expected_paths
 
 
-def test_review_check_exposes_anonymous_render_and_package_tiers():
-    render_tier = review_check.TIER_BY_NAME["render_anonymous"]
-    package_tier = review_check.TIER_BY_NAME["package_anonymous"]
-    dryrun_tier = review_check.TIER_BY_NAME["dryrun_anonymous"]
-
-    assert render_tier.commands[0].name == "paper_render_anonymous"
-    assert "--variant" in render_tier.commands[0].argv
-    assert Path("outputs/paper_render/main_anonymous.pdf") in render_tier.expected_paths
-    assert package_tier.commands[0].name == "package_artifact_anonymous"
-    assert package_tier.zip_path == Path("dist/ranc_contractnet_neurips2027_artifact_anonymous.zip")
-    assert dryrun_tier.commands[0].name == "artifact_dry_run_anonymous"
-
-
 def test_review_check_exposes_dryrun_tier():
     tier = review_check.TIER_BY_NAME["dryrun"]
 
@@ -98,3 +85,10 @@ def test_review_check_exposes_dryrun_tier():
     assert tier.commands[0].name == "artifact_dry_run"
     assert Path("outputs/artifact_dry_run/extracted_bundle_report.md") in tier.expected_paths
     assert Path("outputs/artifact_dry_run/extracted_bundle_report.json") in tier.expected_paths
+
+
+def test_review_check_has_single_identified_paper_path():
+    suffix = "anon" + "ymous"
+    assert f"render_{suffix}" not in review_check.TIER_BY_NAME
+    assert f"package_{suffix}" not in review_check.TIER_BY_NAME
+    assert f"dryrun_{suffix}" not in review_check.TIER_BY_NAME

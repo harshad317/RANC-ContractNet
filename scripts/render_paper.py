@@ -22,16 +22,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_DIR = Path("outputs/paper_render")
 PAPER_DIR = Path("paper/neurips2027")
 MAIN_TEX = "main.tex"
-ANONYMOUS_TEX = "main_anonymous.tex"
 STYLE_FILE = "neurips_2027.sty"
-VARIANT_SOURCES = {
-    "identified": MAIN_TEX,
-    "anonymous": ANONYMOUS_TEX,
-}
-VARIANT_PDFS = {
-    "identified": "main.pdf",
-    "anonymous": "main_anonymous.pdf",
-}
 
 
 def _utc_now() -> str:
@@ -193,21 +184,19 @@ def _render_pages(
     pdf_path: Path,
     *,
     output_dir: Path,
-    variant: str,
     root: Path,
     timeout_seconds: int | None,
 ) -> Dict[str, Any]:
     pdftoppm = shutil.which("pdftoppm")
     if pdftoppm:
-        prefix = output_dir / ("main_page" if variant == "identified" else f"main_{variant}_page")
+        prefix = output_dir / "main_page"
         result = _run_command(
             [pdftoppm, "-png", "-f", "1", "-l", "3", str(pdf_path), str(prefix)],
             cwd=root,
             root=root,
             timeout_seconds=timeout_seconds,
         )
-        page_glob = "main_page-*.png" if variant == "identified" else f"main_{variant}_page-*.png"
-        pages = sorted(output_dir.glob(page_glob))
+        pages = sorted(output_dir.glob("main_page-*.png"))
         return {
             "status": "passed" if result["status"] == "passed" else "failed",
             "command": result,
@@ -216,7 +205,7 @@ def _render_pages(
 
     qlmanage = shutil.which("qlmanage")
     if qlmanage:
-        preview_dir = output_dir / ("preview" if variant == "identified" else f"preview_{variant}")
+        preview_dir = output_dir / "preview"
         preview_dir.mkdir(parents=True, exist_ok=True)
         result = _run_command(
             [qlmanage, "-t", "-s", "1400", "-o", str(preview_dir), str(pdf_path)],
@@ -243,19 +232,16 @@ def run_render_check(
     root: Path = REPO_ROOT,
     output_dir: Path = DEFAULT_OUTPUT_DIR,
     timeout_seconds: int | None = 120,
-    variant: str = "identified",
 ) -> Dict[str, Any]:
     root = root.resolve()
-    if variant not in VARIANT_SOURCES:
-        raise ValueError(f"Unknown paper variant {variant!r}; expected one of {sorted(VARIANT_SOURCES)}.")
     output_dir = (root / output_dir).resolve() if not output_dir.is_absolute() else output_dir.resolve()
-    build_dir = output_dir / "build" / variant
+    build_dir = output_dir / "build" / "identified"
     output_dir.mkdir(parents=True, exist_ok=True)
     build_dir.mkdir(parents=True, exist_ok=True)
 
     started = _utc_now()
     paper_dir = root / PAPER_DIR
-    source_tex = VARIANT_SOURCES[variant]
+    source_tex = MAIN_TEX
     main_tex = paper_dir / source_tex
     tool_paths = _which(["latexmk", "tectonic", "pdflatex", "bibtex", "pdftoppm", "qlmanage"])
     style_status = _style_status(paper_dir)
@@ -265,7 +251,6 @@ def run_render_check(
             "status": "failed",
             "started_utc": started,
             "finished_utc": _utc_now(),
-            "variant": variant,
             "source_tex": source_tex,
             "engine": None,
             "reason": f"Missing paper source: {_rel(main_tex, root)}",
@@ -284,7 +269,6 @@ def run_render_check(
             "status": "skipped",
             "started_utc": started,
             "finished_utc": _utc_now(),
-            "variant": variant,
             "source_tex": source_tex,
             "engine": None,
             "reason": "No TeX engine found on PATH. Install latexmk, tectonic, or pdflatex+bibtex to render the PDF.",
@@ -306,7 +290,7 @@ def run_render_check(
             break
 
     pdf_candidate = build_dir / f"{Path(source_tex).stem}.pdf"
-    pdf_path = output_dir / VARIANT_PDFS[variant]
+    pdf_path = output_dir / "main.pdf"
     if pdf_candidate.exists():
         shutil.copy2(pdf_candidate, pdf_path)
 
@@ -316,7 +300,6 @@ def run_render_check(
         render_result = _render_pages(
             pdf_path,
             output_dir=output_dir,
-            variant=variant,
             root=root,
             timeout_seconds=timeout_seconds,
         )
@@ -325,7 +308,6 @@ def run_render_check(
         "status": status,
         "started_utc": started,
         "finished_utc": _utc_now(),
-        "variant": variant,
         "source_tex": source_tex,
         "engine": engine,
         "reason": "" if status == "passed" else "TeX command failed or did not produce main.pdf.",
@@ -345,7 +327,6 @@ def render_markdown_report(report: Dict[str, Any]) -> str:
         "# RANC-ContractNet Paper Render Report",
         "",
         f"- Status: **{report['status']}**",
-        f"- Variant: `{report.get('variant', 'identified')}`",
         f"- Source TeX: `{report.get('source_tex', MAIN_TEX)}`",
         f"- Engine: `{report.get('engine') or 'none'}`",
         f"- Style mode: `{report.get('style_mode', 'unknown')}`",
@@ -400,10 +381,8 @@ def render_markdown_report(report: Dict[str, Any]) -> str:
 
 
 def write_reports(report: Dict[str, Any], output_dir: Path) -> tuple[Path, Path]:
-    variant = report.get("variant", "identified")
-    suffix = "" if variant == "identified" else f"_{variant}"
-    json_path = output_dir / f"paper_render_report{suffix}.json"
-    md_path = output_dir / f"paper_render_report{suffix}.md"
+    json_path = output_dir / "paper_render_report.json"
+    md_path = output_dir / "paper_render_report.md"
     json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     md_path.write_text(render_markdown_report(report), encoding="utf-8")
     return json_path, md_path
@@ -413,16 +392,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--timeout-seconds", type=int, default=120)
-    parser.add_argument("--variant", choices=sorted(VARIANT_SOURCES), default="identified")
     args = parser.parse_args()
     report = run_render_check(
         output_dir=args.output_dir,
         timeout_seconds=args.timeout_seconds,
-        variant=args.variant,
     )
-    suffix = "" if args.variant == "identified" else f"_{args.variant}"
-    print(args.output_dir / f"paper_render_report{suffix}.md")
-    print(args.output_dir / f"paper_render_report{suffix}.json")
+    print(args.output_dir / "paper_render_report.md")
+    print(args.output_dir / "paper_render_report.json")
     print(f"status={report['status']}")
     raise SystemExit(1 if report["status"] == "failed" else 0)
 

@@ -120,17 +120,6 @@ packaging. It writes:
 The dry-run report is intentionally local and is not inserted back into the zip,
 because doing so would change the artifact hash that the report validates.
 
-For a double-blind submission artifact, use the anonymous dry-run tier after
-building the anonymous zip:
-
-```bash
-python3 scripts/review_check.py --tier dryrun_anonymous
-```
-
-This checks `dist/ranc_contractnet_neurips2027_artifact_anonymous.zip` in the
-same clean-extraction workflow and writes
-`outputs/artifact_dry_run_anonymous/extracted_bundle_report.md/json`.
-
 ## Tier 1: Fast CPU Validation
 
 Expected runtime: under a few minutes on a laptop CPU.
@@ -325,36 +314,6 @@ Pass criteria:
   tier has produced `outputs/paper_render/main.pdf`, that generated paper PDF is
   included; generated preview PNGs under `outputs/paper_render/preview/` are
   included when present.
-
-## Rebuild the Anonymous Submission Bundle
-
-```bash
-python3 scripts/review_check.py --tier render_anonymous
-python3 scripts/review_check.py --tier package_anonymous
-python3 scripts/review_check.py --tier dryrun_anonymous
-```
-
-Equivalent explicit packaging command:
-
-```bash
-python3 experiments/package_artifact.py --identity-mode anonymous
-```
-
-Expected outputs:
-
-- `dist/ranc_contractnet_neurips2027_artifact_anonymous.zip`
-- `dist/ranc_contractnet_neurips2027_artifact_anonymous.sha256`
-- `outputs/paper_render/main_anonymous.pdf`
-- `outputs/paper_render/paper_render_report_anonymous.md`
-- `outputs/artifact_dry_run_anonymous/extracted_bundle_report.md`
-
-Pass criteria:
-
-- The anonymous paper render contains the placeholder author block.
-- The anonymous zip maps `outputs/paper_render/main_anonymous.pdf` to
-  `outputs/paper_render/main.pdf` inside the archive.
-- The archive contains no real author name, affiliation, role title, email, or
-  local path/user tokens.
 
 ## Full Reviewer Sequence
 
