@@ -420,22 +420,27 @@ invariances, or why it was downgraded to a safer policy.
 
 \section{Experiments}
 
-The experiments are organized as falsification tests for the contract-compilation
-claim: whether declared semantics change legal normalization decisions and make
-them auditable. The evidence chain is ordered by claim strength. The paired
-outlier benchmark tests contract causality directly; Sparse and temporal checks
-test representation and split-safety failures; ablations test ledger, downgrade,
-and audit observability; OpenML/UCI runs test the public artifact path and
-predictive scope boundary; neural pilots are exploratory.
+The experiments are organized as a three-level evidence chain for the
+contract-compilation claim. Level 1 tests contract causality: if only the
+declared semantics change, does the compiled policy and targeted failure metric
+change in the predicted direction? Level 2 tests safety clauses that are often
+invisible in aggregate predictive metrics: sparse representation, train-prefix
+fitting, drift monitoring, ledger rows, downgrades, and no-op behavior. Level 3
+tests public-data execution: can the same code path run on OpenML/UCI tasks,
+retain exclusions and audits, and report predictive deltas without turning the
+paper into a universal scaler leaderboard? Neural pilots remain exploratory and
+are not used as central evidence.
 
 \begin{table}[H]
 \centering
 \scriptsize
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{0.86}
-\caption{Evidence map for the contract-compilation claim. Each row names the
-claim, the failure it should expose, and the artifact that must make the result
-auditable; no row is a universal scaler leaderboard.}
+\caption{Evidence map for the contract-compilation claim. Rows are ordered by
+claim strength: semantic intervention first, safety/audit evidence second, and
+public execution evidence third. Each row names the failure it should expose and
+the artifact that must make the result auditable; no row is a universal scaler
+leaderboard.}
 \label{tab:claims-tested}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{llll}
@@ -458,10 +463,11 @@ Artifact checks & claims can be regenerated from package & local state or identi
 \includegraphics[width=\linewidth]{figures/ranc_visual_summary.pdf}
 % Source figure data: contract_delta_table.tex and openml_win_loss_table.tex.
 \caption{Visual summary of the method and two main quantitative summaries.
-Panel A shows the contract-to-audit compilation path. Panel B plots the paired
-semantic deltas. Panel C gives signed public-data deltas (Public-data execution
-evidence on OpenML/UCI); positive values favor RANC after metric-direction
-alignment, and full generated tables remain in the artifact.}
+Panel A is the mechanism: contracts constrain policy selection before validation
+score. Panel B is the decisive semantic test: changing declared outlier meaning
+changes the targeted failure metric. Panel C is the scoped public-data check:
+signed OpenML/UCI deltas show where RANC helps or loses after metric-direction
+alignment, with full task tables and exclusions retained in the artifact.}
 \label{fig:ranc-visual-summary}
 \end{figure}
 
@@ -478,13 +484,17 @@ reporting rule is no cherry-picking across seeds, datasets, or exclusions; full
 protocols, exclusion rules, PDF-render checks, and clean extracted-bundle dry
 runs are in the supplementary material and artifact guide.
 
-\subsection{Paired outlier signal/noise benchmark}
+\subsection{Level 1: paired outlier signal/noise benchmark}
 
-The first decisive benchmark holds paired rare outlier positions fixed while
-changing their declared semantics. In the noise world, extremes are corruptions
-to damp; in the signal world, the same extremes identify rare positives that
-must be preserved. Correct RANC contracts are compared with wrong-contract
-controls: signal-preserving on noise, and noise-damping on signal.
+This is the decisive benchmark because it isolates the variable RANC claims to
+control. The data positions, split protocol, model family, and rare extremes are
+paired; only the declared semantics change. In the noise world, extremes are
+corruptions to damp; in the signal world, the same extremes identify rare
+positives that must be preserved. Correct RANC contracts are compared with
+wrong-contract controls: signal-preserving on noise, and noise-damping on
+signal. If RANC is only a disguised validation-score scaler search, this paired
+semantic intervention should not produce a contract-specific advantage over the
+wrong-contract control.
 
 The noise setting uses corruption AUROC as the primary contract metric, with
 contract violation defined as $1-\mathrm{AUROC}$. Tail false positive rate is
@@ -512,12 +522,14 @@ the paper's first falsifiable claim: contract correctness, not hidden
 validation-score scaler search, determines which normalization failure mode is
 avoided.
 
-\subsection{Sparse and temporal safety checks}
+\subsection{Level 2: sparse and temporal safety checks}
 
-The second evidence block tests engineering failures hidden by metric-only
-scaler comparisons: sparse policies must preserve implicit zeros unless waived,
+The second evidence block tests hard clauses that can be missed by metric-only
+scaler comparisons. Sparse policies must preserve implicit zeros unless waived,
 and temporal policies must fit only on the prefix training window while exposing
-drift monitors.
+drift monitors. These checks are not intended to prove broad predictive
+superiority; they test whether declared representation and split constraints
+are visible as artifacts.
 
 \begin{table}[H]
 \centering
@@ -546,23 +558,25 @@ fitted on 251 training samples only, emitted 5 drift monitors, and recorded
 maximum training-card drift 0.844. These are artifact-level checks of
 representation constraints and leakage/drift evidence, not leaderboard claims.
 
-\subsection{Broader benchmark harness}
+\subsection{Level 2 auxiliary evidence: broader benchmark harness}
 
 The multi-seed harness is reproducibility evidence rather than the central
 claim: 6 synthetic families, 155 scaler-seed rows, and RANC audit pass rate 1.00
 for all RANC rows.
 
-\subsection{Public OpenML/UCI benchmark path}
+\subsection{Level 3: public OpenML/UCI benchmark path}
 
 The public runner fetches OpenML-hosted and UCI-derived tabular data at runtime,
 writes only metrics/tables/audits, and records excluded tasks in
 \texttt{outputs/openml/exclusion\_log.md}. The current run configures 15
 datasets: 12 completed over three seeds each, 3 were excluded by documented
 policy, producing 81 aggregate scaler rows with RANC audit pass rate 1.00.
-These results are public-data artifact evidence; broad benchmark claims remain
-tied to the preregistered final suite and exclusion log. Figure~\ref{fig:ranc-visual-summary}
-shows the public-data signed deltas; the full win/loss table remains in the
-artifact.
+These results are public-data artifact evidence, not the central contract
+causality test. They answer whether the code path runs on public data with
+audits, paired deltas, and exclusion metadata intact. Broad benchmark claims
+remain tied to the preregistered final suite and exclusion log.
+Figure~\ref{fig:ranc-visual-summary} shows the public-data signed deltas; the
+full win/loss table remains in the artifact.
 
 The paired public comparisons used 108 seed-level RANC-baseline pairs across
 the 12 completed tasks. Against standard scaling, RANC had task W/L/T of
@@ -575,19 +589,16 @@ contract compiler rather than a hidden validation-search optimizer.
 
 \subsection{Result narrative and falsifiability}
 
-The main empirical takeaway is an ordered evidence chain. First, RANC should be
-evaluated on whether the declared contract changes the legal normalization
-decision and exposes the resulting audit trail. The strongest evidence for that
-claim is the paired outlier signal/noise benchmark: the data-generating
+The main empirical takeaway is not that one scaler wins everywhere. It is that
+normalization can be evaluated as an auditable contract decision. First, the
+paired outlier benchmark supplies the strongest evidence: the data-generating
 structure is held fixed while only the declared semantics of extremes changes,
 and the correct contract reduces the scenario-specific failure mode relative to
-the wrong-contract control.
-
-Second, the sparse and temporal checks show that representation and split
-constraints are visible in generated artifacts. Third, the OpenML/UCI results
-are therefore supportive but not central: they demonstrate a public-data
-execution path, audits for completed tasks, exclusion metadata, and paired
-predictive deltas.
+the wrong-contract control. Second, sparse and temporal checks show that
+representation and split constraints are visible in generated artifacts. Third,
+OpenML/UCI runs demonstrate a public-data execution path, audits for completed
+tasks, exclusion metadata, and paired predictive deltas; they are supportive but
+not central.
 
 The validation selector result is intentionally reported even where it is
 stronger on raw public score. A selector that searches preprocessing choices by
@@ -599,13 +610,15 @@ faithfully preserve the wrong structure; the point is that this failure is
 visible in wrong-contract controls, ledger rows, and degraded targeted metrics
 rather than hidden inside a selected scaler name.
 
-The approach would be falsified by future preregistered runs in at least three
-ways: if correct contracts no longer improve the targeted failure metric over
-wrong-contract controls in paired semantic tests; if train-only, sparse, drift,
-or inverse constraints repeatedly pass the audit while being violated in the
-actual transformed data; or if the public artifact cannot reproduce its reported
-tables and audit reports from the documented configs. These are stronger tests
-than asking whether one scaler wins a single aggregate leaderboard.
+The approach would be weakened or falsified by future preregistered runs in at
+least three ways. First, paired semantic tests could show that correct contracts
+no longer improve the targeted failure metric over wrong-contract controls.
+Second, audit checks could pass while the transformed data violates train-only,
+sparse, drift, inverse, or monotonicity constraints. Third, the packaged
+artifact could fail to reproduce its reported tables and audit reports from the
+documented configs. These tests are stricter than asking whether one scaler wins
+a single aggregate leaderboard, because they attack the contract-compilation
+claim directly.
 
 \FloatBarrier
 
