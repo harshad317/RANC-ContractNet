@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use RANC-ContractNet, please cite this software artifact."
+title: "RANC-ContractNet: Auditable Normalization as Invariance Compilation"
+type: software
+authors:
+  - family-names: Patil
+    given-names: Harshad Hemant
+    email: hhpatil001@gmail.com
+    affiliation: Springer Nature
+version: "0.1.0"
+date-released: "2026-06-03"
+license: MIT
+repository-code: "https://github.com/harshad317/RANC-ContractNet"
+url: "https://github.com/harshad317/RANC-ContractNet/releases/tag/artifact-local-draft-2026-06-03"
+keywords:
+  - normalization
+  - preprocessing
+  - machine learning
+  - invariance
+  - audit
+  - falsification
+abstract: >-
+  RANC-ContractNet treats normalization as a contract-constrained compilation
+  problem. It compiles train-fold-only normalization policies from declared
+  invariance contracts, records signal-risk ledgers and rejected candidates, and
+  emits replayable audit reports with falsification outcomes.

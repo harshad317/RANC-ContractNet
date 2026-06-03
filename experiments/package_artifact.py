@@ -18,7 +18,14 @@ DEFAULT_OUTPUT = Path("dist") / f"{BUNDLE_STEM}.zip"
 ANONYMOUS_OUTPUT = Path("dist") / f"{BUNDLE_STEM}_anonymous.zip"
 ZIP_TIMESTAMP = (2026, 1, 1, 0, 0, 0)
 
-ROOT_FILES = ["pyproject.toml", "README.md"]
+ROOT_FILES = [
+    "pyproject.toml",
+    "README.md",
+    "LICENSE",
+    "CITATION.cff",
+    "CONTRIBUTING.md",
+    ".zenodo.json",
+]
 SOURCE_ROOTS = ["src/ranc_contractnet", "experiments", "scripts", "tests", "paper/neurips2027"]
 REQUIRED_PATHS = ROOT_FILES + SOURCE_ROOTS
 
@@ -64,12 +71,24 @@ AUTHOR_ORG = "".join(["Spring", "er ", "Nat", "ure"])
 AUTHOR_ROLE_TITLE = "".join(["Lead ", "Data ", "Scientist"])
 AUTHOR_ROLE = f"{AUTHOR_ROLE_TITLE}, {AUTHOR_ORG}"
 AUTHOR_EMAIL = "".join(["hh", "patil", "001", "@", "gmail", ".com"])
+AUTHOR_FAMILY_NAME = "".join(["Pat", "il"])
+AUTHOR_GIVEN_NAMES = "".join(["Har", "shad ", "Hem", "ant"])
+AUTHOR_REVERSED_NAME = f"{AUTHOR_FAMILY_NAME}, {AUTHOR_GIVEN_NAMES}"
+GITHUB_USER = "".join(["har", "shad", "317"])
+REPOSITORY_URL = f"https://github.com/{GITHUB_USER}/RANC-ContractNet"
+RELEASE_URL = f"{REPOSITORY_URL}/releases/tag/artifact-local-draft-2026-06-03"
 IDENTITY_REPLACEMENTS = {
+    RELEASE_URL: "https://anonymous.example.org/ranc-contractnet/releases/artifact-local-draft-2026-06-03",
+    REPOSITORY_URL: "https://anonymous.example.org/ranc-contractnet",
     AUTHOR_NAME: "Anonymous Author",
+    AUTHOR_REVERSED_NAME: "Anonymous Author",
+    AUTHOR_GIVEN_NAMES: "Anonymous",
+    AUTHOR_FAMILY_NAME: "Author",
     AUTHOR_ROLE: "Anonymous Institution",
     AUTHOR_ROLE_TITLE: "Anonymous Role",
     AUTHOR_ORG: "Anonymous Institution",
     AUTHOR_EMAIL: "anonymous@example.org",
+    GITHUB_USER: "anonymous",
 }
 IDENTITY_MODES = {"identified", "anonymous"}
 

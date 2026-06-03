@@ -1,0 +1,34 @@
+{
+  "title": "RANC-ContractNet: Auditable Normalization as Invariance Compilation",
+  "upload_type": "software",
+  "publication_date": "2026-06-03",
+  "creators": [
+    {
+      "name": "Patil, Harshad Hemant",
+      "affiliation": "Springer Nature"
+    }
+  ],
+  "description": "RANC-ContractNet treats normalization as a contract-constrained compilation problem. It compiles train-fold-only normalization policies from declared invariance contracts, records signal-risk ledgers and rejected candidates, and emits replayable audit reports with falsification outcomes.",
+  "access_right": "open",
+  "license": "MIT",
+  "keywords": [
+    "normalization",
+    "preprocessing",
+    "machine learning",
+    "invariance",
+    "audit",
+    "falsification"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/harshad317/RANC-ContractNet",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/harshad317/RANC-ContractNet/releases/tag/artifact-local-draft-2026-06-03",
+      "relation": "isVersionOf",
+      "scheme": "url"
+    }
+  ]
+}

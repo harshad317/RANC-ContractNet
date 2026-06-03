@@ -9,6 +9,15 @@ This repository is a research scaffold for a NeurIPS 2027 main-track submission.
 preprocessing compiler is the central contribution; torch activation policies are included
 as an exploratory extension.
 
+## Repository Status
+
+- Branch: `main`
+- Current artifact release:
+  [artifact-local-draft-2026-06-03](https://github.com/harshad317/RANC-ContractNet/releases/tag/artifact-local-draft-2026-06-03)
+- License: MIT
+- Citation metadata: `CITATION.cff`
+- DOI status: pending; `.zenodo.json` is included for a future Zenodo archive
+
 ## Quick Start
 
 ```bash
@@ -191,6 +200,29 @@ engineering tasks.
 
 The current local snapshot/tag criteria are recorded in
 `paper/neurips2027/release_snapshot.md`.
+
+## Citation
+
+If you use RANC-ContractNet, cite the software artifact:
+
+```bibtex
+@software{patil2026ranccontractnet,
+  author = {Patil, Harshad Hemant},
+  title = {RANC-ContractNet: Auditable Normalization as Invariance Compilation},
+  year = {2026},
+  version = {0.1.0},
+  url = {https://github.com/harshad317/RANC-ContractNet},
+  note = {Artifact release: artifact-local-draft-2026-06-03}
+}
+```
+
+The current artifact release attaches identified and anonymous supplementary
+bundles with SHA-256 sidecars. A DOI should be minted from Zenodo after the next
+stable release or preprint checkpoint.
+
+## License
+
+This project is released under the MIT License. See `LICENSE`.
 
 ## Repository Layout
 

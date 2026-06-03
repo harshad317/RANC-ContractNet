@@ -19,6 +19,10 @@ def _write_bytes(path: Path, data: bytes) -> None:
 def _minimal_repo(root: Path) -> None:
     _write(root / "pyproject.toml", "[project]\nname='demo'\n")
     _write(root / "README.md", "# Demo\n")
+    _write(root / "LICENSE", "MIT License\n")
+    _write(root / "CITATION.cff", "cff-version: 1.2.0\n")
+    _write(root / "CONTRIBUTING.md", "# Contributing\n")
+    _write(root / ".zenodo.json", "{}\n")
     _write(root / "src/ranc_contractnet/__init__.py", "__version__ = '0.0'\n")
     _write(root / "experiments/__init__.py", "")
     _write(root / "experiments/configs/smoke.yaml", "seed: 0\n")
@@ -85,6 +89,10 @@ def test_artifact_packager_builds_zip_with_manifest_and_hashes(tmp_path):
         assert "ranc_contractnet_neurips2027_artifact/ARTIFACT_MANIFEST.md" in names
         assert "ranc_contractnet_neurips2027_artifact/REPRODUCE.md" in names
         assert "ranc_contractnet_neurips2027_artifact/SHA256SUMS" in names
+        assert "ranc_contractnet_neurips2027_artifact/LICENSE" in names
+        assert "ranc_contractnet_neurips2027_artifact/CITATION.cff" in names
+        assert "ranc_contractnet_neurips2027_artifact/CONTRIBUTING.md" in names
+        assert "ranc_contractnet_neurips2027_artifact/.zenodo.json" in names
         assert "ranc_contractnet_neurips2027_artifact/scripts/review_check.py" in names
         assert "ranc_contractnet_neurips2027_artifact/paper/neurips2027/artifact_eval.md" in names
         assert "ranc_contractnet_neurips2027_artifact/outputs/openml/openml_table.md" in names
@@ -110,13 +118,44 @@ def test_artifact_packager_anonymous_mode_scrubs_identity_and_maps_render_output
     role_title = "".join(["Lead ", "Data ", "Scientist"])
     role_org = f"{role_title}, {org}"
     email = "".join(["hh", "patil", "001", "@", "gmail", ".com"])
+    family_name = "".join(["Pat", "il"])
+    given_names = "".join(["Har", "shad ", "Hem", "ant"])
+    reversed_author = f"{family_name}, {given_names}"
+    cff_family = f"family-names: {family_name}"
+    cff_given = f"given-names: {given_names}"
+    repo_user = "".join(["har", "shad", "317"])
+    repo_url = f"https://github.com/{repo_user}/RANC-ContractNet"
+    anonymous_repo_url = "https://anonymous.example.org/ranc-contractnet"
     _write(
         tmp_path / "paper/neurips2027/main.tex",
         f"{author}\n{role_org}\n{email}\n",
     )
     _write(
         tmp_path / "pyproject.toml",
-        f"[project]\nname='demo'\nauthors=[{{name='{author}', email='{email}'}}]\n",
+        "[project]\n"
+        "name='demo'\n"
+        f"authors=[{{name='{author}', email='{email}'}}]\n"
+        "[project.urls]\n"
+        f"Repository='{repo_url}'\n",
+    )
+    _write(tmp_path / "README.md", f"Repo: {repo_url}\n")
+    _write(tmp_path / "LICENSE", f"Copyright (c) 2026 {author}\n")
+    _write(
+        tmp_path / "CITATION.cff",
+        "cff-version: 1.2.0\n"
+        f"repository-code: {repo_url}\n"
+        "authors:\n"
+        f"  - {cff_family}\n"
+        f"    {cff_given}\n"
+        f"    email: {email}\n"
+        f"    affiliation: {org}\n",
+    )
+    _write(
+        tmp_path / ".zenodo.json",
+        "{"
+        f"\"creators\":[{{\"name\":\"{reversed_author}\",\"affiliation\":\"{org}\"}}],"
+        f"\"related_identifiers\":[{{\"identifier\":\"{repo_url}\"}}]"
+        "}\n",
     )
     _write_bytes(tmp_path / "outputs/paper_render/main.pdf", f"%PDF identified {author}\n".encode("utf-8"))
     _write_bytes(tmp_path / "outputs/paper_render/main_anonymous.pdf", b"%PDF anonymous\n")
@@ -141,6 +180,8 @@ def test_artifact_packager_anonymous_mode_scrubs_identity_and_maps_render_output
         assert "Anonymous Institution" in main_tex
         assert "anonymous@example.org" in main_tex
         assert "Anonymous Author" in pyproject
+        assert repo_user not in pyproject
+        assert anonymous_repo_url in pyproject
         assert b"%PDF anonymous" in packaged_pdf
         assert "ranc_contractnet_neurips2027_artifact/outputs/paper_render/main_anonymous.pdf" not in names
         assert "ranc_contractnet_neurips2027_artifact/outputs/paper_render/preview/main.pdf.png" in names
@@ -150,6 +191,10 @@ def test_artifact_packager_anonymous_mode_scrubs_identity_and_maps_render_output
             assert email.encode("utf-8") not in data
             assert org.encode("utf-8") not in data
             assert role_title.encode("utf-8") not in data
+            assert repo_user.encode("utf-8") not in data
+            assert reversed_author.encode("utf-8") not in data
+            assert cff_given.encode("utf-8") not in data
+            assert cff_family.encode("utf-8") not in data
 
 
 def test_artifact_packager_rejects_local_identity_leaks(tmp_path):
