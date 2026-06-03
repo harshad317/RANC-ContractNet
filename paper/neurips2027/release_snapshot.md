@@ -1,12 +1,16 @@
 # Local Release Snapshot
 
-Snapshot target: `artifact-local-draft-2026-06-03`
+Snapshot target: `paper-revision-draft-2026-06-03-v3`
 
-Status: artifact-complete local draft as of 2026-06-03. This snapshot is meant
-to freeze the current implementation, paper scaffold, generated summary
-artifacts, and reviewer checks in a local git tag. It is not yet an official
-conference submission because the final NeurIPS 2027 style file and submission
-portal requirements are not available in this workspace.
+Status: artifact-complete local draft as of 2026-06-03. This snapshot freezes
+the current implementation, paper scaffold, generated summary artifacts,
+reviewer checks, and visually checked paper PDFs in a GitHub prerelease tag. It
+supersedes `paper-revision-draft-2026-06-03-v2` after synchronizing repository
+metadata to the corrected release checkpoint. The `v2` checkpoint itself
+superseded `paper-revision-draft-2026-06-03` after visual PDF QA of the
+generated figure assets. It is not yet an official conference submission
+because the final NeurIPS 2027 style file and submission portal requirements are
+not available in this workspace.
 
 ## Included Scope
 

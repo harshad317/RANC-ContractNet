@@ -61,7 +61,7 @@ all = [
 Homepage = "https://github.com/harshad317/RANC-ContractNet"
 Repository = "https://github.com/harshad317/RANC-ContractNet"
 Issues = "https://github.com/harshad317/RANC-ContractNet/issues"
-Release = "https://github.com/harshad317/RANC-ContractNet/releases/tag/artifact-local-draft-2026-06-03"
+Release = "https://github.com/harshad317/RANC-ContractNet/releases/tag/paper-revision-draft-2026-06-03-v3"
 
 [tool.setuptools.packages.find]
 where = ["src"]
