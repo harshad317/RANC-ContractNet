@@ -428,8 +428,11 @@ retain exclusions and audits, and report predictive deltas without turning the
 paper into a universal scaler leaderboard? This order is intentional: the paired
 semantic intervention is the main causal evidence, safety checks test whether
 hard clauses are enforced, and public benchmarks test execution breadth rather
-than leaderboard status. Neural pilots remain exploratory and are not used as
-central evidence.
+than leaderboard status. This order also mirrors the expected reviewer
+objections: novelty requires a semantic intervention, safety requires visible
+hard-clause evidence, and usefulness requires public execution without hiding
+selector losses. Neural pilots remain exploratory and are not used as central
+evidence.
 
 \begin{table}[H]
 \centering
@@ -696,23 +699,28 @@ decisions require user contracts or supervised opt-in, and the neural path
 remains exploratory. Broad benchmark conclusions must stay tied to the
 documented suite, seeds, exclusions, and transient fetch or run failures.
 
-\subsection{Failure modes and detection}
+\subsection{Threats to validity and failure detection}
 
-The main failure modes are concrete. Underspecified contracts can produce
-conservative no-ops or weak legal policies. Wrong declared semantics can make
-RANC preserve the wrong structure. Rare-signal ambiguity requires domain
-contracts or supervised opt-in rather than compiler inference. Drift monitors
-expose shift but do not choose retraining or adaptation policy. A legal
-normalizer can still be unhelpful for a downstream model, and neural adapters
-remain exploratory until larger benchmarks justify central claims.
+The main threats to validity are concrete. First, contract validity is external
+to the compiler: underspecified contracts can produce conservative no-ops, and
+wrong declared semantics can make RANC preserve the wrong structure. Second,
+checker coverage is relative rather than global: exact clauses are checked on
+their stated domains, while numeric falsification tests certify only their
+deterministic audit support. Third, evidence breadth remains scoped: paired
+semantic worlds test causality, sparse and temporal checks test safety, and
+OpenML/UCI runs test public execution rather than broad predictive dominance.
+Fourth, rare-signal ambiguity requires domain contracts or supervised opt-in
+rather than compiler inference. Finally, drift monitors expose shift but do not
+choose retraining policy, and neural adapters remain exploratory until larger
+benchmarks justify central claims.
 
-RANC exposes rather than eliminates these failures. Reviewers should inspect
+RANC exposes rather than eliminates these threats. Reviewers should inspect
 downgrades, no-op reasons, rejected candidates, ledger rows, wrong-contract
-controls, drift monitors, predictive deltas, and claims-boundary text. The
-method would need stronger evidence if those artifacts stopped exposing the
-listed failures, if audits passed while transformed data violated hard clauses,
-or if correct contracts did not outperform wrong-contract controls on targeted
-semantic stress tests.
+controls, drift monitors, predictive deltas, checker domains, and
+claims-boundary text. The method would need stronger evidence if those artifacts
+stopped exposing the listed failures, if audits passed while transformed data
+violated hard clauses, or if correct contracts did not outperform
+wrong-contract controls on targeted semantic stress tests.
 
 \section{Conclusion}
 
