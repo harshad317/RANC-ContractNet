@@ -148,6 +148,10 @@ def generate_visual_summary(output_dir: Path) -> tuple[Path, Path]:
         figsize=(7.0, 1.75),
         gridspec_kw={"width_ratios": [1.75, 1.0, 1.05], "wspace": 0.55},
     )
+    fig.patch.set_facecolor("white")
+    fig.patch.set_alpha(1.0)
+    for ax in axes:
+        ax.set_facecolor("white")
     _draw_pipeline_panel(axes[0])
     _draw_outlier_panel(axes[1], deltas)
     _draw_openml_panel(axes[2], openml)
@@ -158,8 +162,14 @@ def generate_visual_summary(output_dir: Path) -> tuple[Path, Path]:
         "Producer": "matplotlib",
         "Title": "RANC-ContractNet visual summary",
     }
-    fig.savefig(pdf_path, bbox_inches="tight", metadata=metadata)
-    fig.savefig(png_path, dpi=220, bbox_inches="tight", metadata={"Software": "matplotlib"})
+    save_kwargs = {
+        "bbox_inches": "tight",
+        "facecolor": "white",
+        "edgecolor": "white",
+        "transparent": False,
+    }
+    fig.savefig(pdf_path, metadata=metadata, **save_kwargs)
+    fig.savefig(png_path, dpi=220, metadata={"Software": "matplotlib"}, **save_kwargs)
     plt.close(fig)
     return pdf_path, png_path
 
