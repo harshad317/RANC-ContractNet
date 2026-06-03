@@ -50,53 +50,71 @@
 \maketitle
 
 \begin{abstract}
-Normalization is often treated as a preprocessing hyperparameter, but every
-normalizer encodes a legality claim: which variation may be removed, and which
-signal must survive. Validation-score scaler search can hide illegal choices: a
-rank map can erase metric signal, robust scaling can damp rare positives,
-centering can densify sparse inputs, and fitting outside the active training
-fold can leak future information. RANC-ContractNet treats normalization as
-invariance compilation rather than AutoML scaler search. Given a training fold,
-an explicit contract, and implemented checkers, it builds regime cards, records
-signal-risk ledger rows, selects the least complex admissible policy, and gates
-acceptance with falsification tests. The fitted sklearn transformer returns
-transformed data together with a replayable audit report containing fitted
-statistics, rejected candidates, downgrades, drift monitors, and test outcomes.
-The guarantee is relative to the declared contract: accepted policies pass
-checked hard clauses, while failures become recorded downgrades or no-ops. In
-paired outlier worlds where identical extremes are either noise or rare signal,
-correct contracts improve the targeted failure metric over wrong-contract
-controls. The claim is auditable legality under declared invariances and
-implemented checkers, not universal predictive dominance.
+Normalization is often treated as a preprocessing hyperparameter, but a
+normalizer is also a scientific claim about which variation may be removed and
+which signal must survive. Validation-score scaler search can hide illegal
+choices: rank maps can erase metric signal, robust scaling can damp rare
+positives, centering can densify sparse inputs, and fitting outside the active
+training fold can leak future information. RANC-ContractNet is not a new
+scaler. It is a contract compiler that treats normalization as invariance
+compilation rather than AutoML scaler search. Given a training fold, a declared
+contract, and implemented checkers, it builds regime cards, records
+signal-risk ledger rows, rejects hard-clause violations, selects the least
+complex admissible policy, and gates acceptance with falsification tests. The
+fitted sklearn transformer returns transformed data together with a replayable
+audit report containing fitted statistics, rejected candidates, downgrades,
+drift monitors, and test outcomes. The guarantee is relative to the declared
+contract: accepted policies pass checked clauses on stated support, while
+failures become recorded downgrades or no-ops. In paired outlier worlds where
+identical extremes are either noise or rare signal, correct contracts improve
+the targeted failure metric over wrong-contract controls. The claim is
+auditable legality under declared invariances and implemented checkers, not
+universal predictive dominance.
 \end{abstract}
 
 \section{Introduction}
 
 Most machine-learning pipelines name a normalizer but not the contract that
-licenses it. Standardization declares mean and scale expendable. Robust scaling
-declares extremes suspicious. Rank transforms preserve order while discarding
-metric gaps. Centering sparse features may change both storage and semantics.
-These are semantic decisions, not cosmetic preprocessing. A validation metric
-can reward a transform that is useful for one split and still illegal for the
-task because it removed declared signal, violated representation constraints, or
-used information that should not have been visible.
+licenses it. Standardization declares location and scale expendable. Robust
+scaling declares extremes suspicious. Rank transforms preserve order while
+discarding metric gaps. Centering sparse features may change both storage and
+semantics. These are not cosmetic choices. They are assertions about the data
+generating process, the admissible split, and the signal that the downstream
+model is allowed to see.
+
+Today these assertions are usually implicit. A validation selector can answer
+which scaler helped a downstream model on a held-out split, but that is a
+different question from legality. A validation metric can reward a transform
+that is useful on one split while still being illegal for the task because it
+removed declared signal, violated representation constraints, used future
+statistics, or destroyed an inverse required by downstream reporting. A single
+name such as ``robust scaler'' or ``quantile transform'' is therefore too weak a
+record of what happened.
 
 The missing object is a contract. Before a normalizer is fit, a pipeline should
 be able to state which observations may supply statistics, which invariances are
 allowed, which feature geometry must remain valid, whether an inverse is
-required, and whether rare extremes are corruptions or signal. A validation
-selector answers a different question: which scaler helped a downstream model on
-a held-out split? That may be useful, but it does not certify that the selected
-transform preserved zeros, avoided leakage, respected temporal order, or kept
-declared rare signal intact.
+required, and whether rare extremes are corruptions or signal. That contract
+should affect the selected policy before validation performance is consulted,
+and the final transform should leave enough evidence for a reviewer to replay
+why it was legal.
 
-This paper treats normalization as a compilation problem. The input is a
+RANC-ContractNet treats normalization as a compilation problem. The input is a
 training fold plus a contract over invariance, signal risk, split discipline,
 representation, and auditability. The output is a fitted policy and a structured
 audit trail. A policy can be predictively helpful and still illegal if it
-violates a hard clause; conversely, a conservative no-op can be the correct
-compiled result when no candidate transform is justified by the declared
-semantics.
+violates a hard clause; conversely, a conservative no-op is a valid compiled
+outcome rather than a failed search when no candidate transform is justified by
+the declared semantics.
+
+This framing is most useful when preprocessing decisions carry scientific,
+regulatory, deployment, or representation meaning: sparse count features whose
+implicit zeros must survive; temporal data where future statistics are illegal;
+rare-event settings where extremes may be signal rather than noise; and
+pipelines that need auditable, replayable preprocessing decisions. It is less
+appropriate as a default replacement for validation search when the only goal is
+maximizing a public leaderboard metric and no invariance, split, inverse, or
+signal-preservation constraints are being asserted.
 
 RANC-ContractNet implements this view for tabular pipelines. It profiles only
 the active training fold into regime cards, ingests or derives invariance
@@ -114,16 +132,18 @@ The paper makes five contributions:
 \setlength{\parsep}{0pt}
   \item a typed contract vocabulary for regime cards, invariance clauses,
   signal-risk ledgers, policies, drift monitors, falsification results, and
-  audit reports;
-  \item a train-fold-only sklearn transformer with deterministic serialization
-  and legal inverse behavior;
+  audit reports, making normalization assumptions explicit rather than implicit;
+  \item a train-fold-only sklearn transformer with deterministic serialization,
+  legal inverse behavior, and audit reports that expose fitted statistics,
+  rejected candidates, downgrades, and seeds;
   \item a deterministic compiler over common normalization families that uses
   hard clauses rather than validation outcomes to choose a policy;
-  \item falsification tests that turn failures into recorded rejections,
-  downgrades, or no-ops; and
-  \item a reproducible artifact path covering synthetic semantic controls,
-  sparse and temporal safety checks, ablations, OpenML/UCI public runs, PDF
-  rendering, and clean extracted-bundle validation.
+  \item a falsification suite that turns leakage, sparse densification,
+  monotonicity, inverse, outlier-semantic, drift, covariance, and saturation
+  failures into recorded rejections, downgrades, or no-ops; and
+  \item a reproducible artifact path covering paired semantic controls, sparse
+  and temporal safety checks, ablations, OpenML/UCI public runs, PDF rendering,
+  packaging hygiene, and clean extracted-bundle dry runs.
 \end{enumerate}
 The claim is deliberately narrow. RANC-ContractNet is not AutoML under another
 name, and it does not prove that user-supplied semantics are correct. Wrong
