@@ -31,6 +31,20 @@ for a different objective rather than a refutation of the contract-compilation
 claim. The fair comparison should report both axes: predictive utility and
 contract/audit guarantees.
 
+## Intended Use
+
+Use RANC when normalization choices carry semantics beyond raw predictive score:
+sparse implicit zeros must remain meaningful; temporal or grouped splits make
+future statistics illegal; rare extremes may be signal rather than
+contamination; inverse transforms are required for reporting; or deployment
+requires a replayable preprocessing audit.
+
+Do not present RANC as a drop-in promise of higher accuracy, a substitute for
+domain knowledge, or evidence that a user-supplied contract is true. If the only
+objective is held-out predictive score and no invariance, split, inverse, or
+representation constraint is being asserted, validation search is the more
+direct tool.
+
 The final paper should use restrained language: RANC compiles normalization
 policies from declared invariance contracts, exposes the resulting audit trail,
 and can be tested for contract compliance. It should avoid claiming universal
@@ -85,3 +99,6 @@ and audit reports.
   results should report both predictive metrics and audit diagnostics.
 - Neural activation-policy results remain exploratory until backed by a larger
   neural benchmark.
+- The method would need stronger evidence if audits passed while transformed
+  data violated hard clauses or if correct contracts failed to outperform
+  wrong-contract controls on targeted semantic stress tests.

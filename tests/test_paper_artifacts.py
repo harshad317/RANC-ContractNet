@@ -127,7 +127,7 @@ def test_main_paper_wires_first_decisive_result():
         "protocols, exclusion rules, PDF-render checks",
         "no cherry-picking across seeds, datasets, or exclusions",
         "\\subsection{Failure modes and detection}",
-        "full checklists are supplementary",
+        "Reviewers should inspect",
         "\\subsection{Result narrative and falsifiability}",
         "The main empirical takeaway is not that one scaler wins everywhere",
         "paired outlier benchmark supplies the strongest evidence",
@@ -142,7 +142,14 @@ def test_main_paper_wires_first_decisive_result():
         "\\section{Conclusion}",
         "RANC-ContractNet reframes normalization as a checked compilation step",
         "does not claim to discover true domain semantics",
-        "with conservative downgrades or no-ops recorded when legality cannot be established",
+        "The method should be used when a normalization choice carries semantics beyond",
+        "The method should not be used as a drop-in promise of higher accuracy",
+        "RANC exposes rather than eliminates these failures",
+        "The method would need stronger evidence if those artifacts stopped exposing",
+        "Its claim is narrower and testable",
+        "The intended role is therefore not to replace all scaler selection",
+        "what licensed that removal",
+        "That shift from unnamed preprocessing to checked invariance compilation",
     ]:
         assert phrase in text or phrase in compact_text
     assert "\\label{tab:failure-modes}" not in text
@@ -251,8 +258,12 @@ def test_paper_claims_boundary_avoids_overclaiming_language():
     assert "Underspecified contracts can lead to conservative no-op" in claims
     assert "Wrong declared semantics can make RANC preserve the wrong structure" in claims
     assert "Result Interpretation" in claims
+    assert "Intended Use" in claims
+    assert "Use RANC when normalization choices carry semantics beyond raw predictive score" in claims
+    assert "Do not present RANC as a drop-in promise of higher accuracy" in claims
     assert "The strongest current evidence is the paired outlier signal/noise benchmark" in claims
     assert "The contract-compilation claim would be weakened or falsified" in claims
+    assert "The method would need stronger evidence" in claims
     assert "Author Response Checklist" in claims
     assert "AutoML/scaler-selection objection" in claims
     assert "Reproducibility objection" in claims

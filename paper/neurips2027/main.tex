@@ -658,6 +658,20 @@ declared invariance contracts should control policy selection, yielding decision
 auditable, replayable, and testable for leakage, drift, sparsity, inverse
 validity, monotonicity, and signal-preservation failures.
 
+The method should be used when a normalization choice carries semantics beyond
+raw predictive score: sparse implicit zeros must remain meaningful; temporal or
+grouped splits make future statistics illegal; rare extremes may be signal
+rather than contamination; inverse transforms are required for reporting; or a
+deployment pipeline needs a replayable audit of preprocessing decisions. In
+these settings, RANC makes the normalizer answerable to an explicit contract.
+
+The method should not be used as a drop-in promise of higher accuracy, as a
+substitute for domain knowledge, or as evidence that the supplied contract is
+true. If the task has no meaningful invariance or representation constraints and
+the sole objective is held-out predictive score, validation search remains the
+more direct tool. RANC can still be run in such settings, but its main output is
+auditability rather than a guarantee of better metrics.
+
 This distinction matters for public OpenML/UCI: the validation selector may
 choose preprocessing by held-out score, whereas RANC chooses from contracts and
 regime evidence without hidden validation-score scaler search. Stronger selector
@@ -671,23 +685,38 @@ documented suite, seeds, exclusions, and transient fetch or run failures.
 
 \subsection{Failure modes and detection}
 
-The main failure modes are underspecified contracts, wrong declared semantics,
-rare-signal ambiguity, predictive-objective mismatch, drift without adaptation,
-legal but unhelpful transforms, and exploratory neural transfer. RANC exposes
-rather than eliminates them through downgrades, no-op reasons, ledger rows,
-wrong-contract controls, drift monitors, predictive deltas, and claims-boundary
-text; full checklists are supplementary.
+The main failure modes are concrete. Underspecified contracts can produce
+conservative no-ops or weak legal policies. Wrong declared semantics can make
+RANC preserve the wrong structure. Rare-signal ambiguity requires domain
+contracts or supervised opt-in rather than compiler inference. Drift monitors
+expose shift but do not choose retraining or adaptation policy. A legal
+normalizer can still be unhelpful for a downstream model, and neural adapters
+remain exploratory until larger benchmarks justify central claims.
+
+RANC exposes rather than eliminates these failures. Reviewers should inspect
+downgrades, no-op reasons, rejected candidates, ledger rows, wrong-contract
+controls, drift monitors, predictive deltas, and claims-boundary text. The
+method would need stronger evidence if those artifacts stopped exposing the
+listed failures, if audits passed while transformed data violated hard clauses,
+or if correct contracts did not outperform wrong-contract controls on targeted
+semantic stress tests.
 
 \section{Conclusion}
 
 RANC-ContractNet reframes normalization as a checked compilation step: declare
 invariances, compile only legal policies, and serialize evidence. The paper does
 not claim to discover true domain semantics or dominate every validation-selected
-scaler. Its claim is narrower: relative to declared contracts and implemented
-checkers, decisions are auditable, replayable, and falsifiable, with conservative
-downgrades or no-ops recorded when legality cannot be established. All reported
-policies, rejections, fitted parameters, seeds, monitors, and falsification
-results are serialized; sklearn pipelines enforce fit/transform split discipline.
+scaler. Its claim is narrower and testable: relative to declared contracts,
+candidate sets, and implemented checkers, normalization decisions are auditable,
+replayable, and falsifiable, with conservative downgrades or no-ops recorded
+when legality cannot be established.
+
+The intended role is therefore not to replace all scaler selection, but to make
+high-stakes or semantically constrained preprocessing reviewable. If a
+normalizer removes variation, RANC asks what licensed that removal, which
+training evidence was used, which candidates were rejected, and which tests
+could falsify the choice. That shift from unnamed preprocessing to checked
+invariance compilation is the contribution.
 
 \begingroup
 \scriptsize
