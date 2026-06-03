@@ -156,11 +156,15 @@ wrong-contract controls, signal-risk ledger rows, and degraded targeted metrics.
 RANC-ContractNet builds on the same practical transform vocabulary exposed by
 mainstream machine-learning libraries: standardization, min/max scaling,
 max-absolute scaling, robust affine transforms, quantile maps, and power
-transforms \cite{pedregosa2011scikit,yeo2000new}. These libraries explain how to
-fit a chosen transform; they do not state whether centering violates sparse-zero
-semantics, whether rank mapping erases distance-as-signal evidence, whether an
-inverse is legally required, or whether fitted statistics came from an allowed
-split. RANC keeps the same primitive vocabulary but changes the interface: a
+transforms \cite{pedregosa2011scikit,yeo2000new}. Those tools answer the
+engineering question ``how do I fit and apply this transform?'' RANC asks a
+prior scientific question: ``is this transform licensed by the task contract?''
+The difference matters because the same primitive can be legal or illegal
+depending on declared semantics. Centering may violate sparse-zero meaning;
+rank mapping may erase distance-as-signal evidence; robust scaling may suppress
+rare positives; and an otherwise valid transform may be unusable when a legal
+inverse is required. RANC therefore does not propose a replacement catalog of
+scalers. It keeps the same primitive vocabulary but changes the interface: a
 scaler is selected only after it satisfies declared invariance, sparsity,
 inverse, monotonicity, and audit clauses. The contribution is a legal and
 auditable compiler for existing primitives.
@@ -171,32 +175,45 @@ preprocessors, and hyperparameters to improve validation performance
 \cite{feurer2015automl,olson2016tpot}. Their central question is which pipeline
 scores best under a search budget. RANC addresses a prior legality question:
 which normalization policies are permissible before validation performance is
-consulted. It compiles the least complex legal policy under a contract and audit
-cost, then records rejected candidates, downgrades, no-ops, and falsification
-results. A validation-selected scaler is a useful comparator and can win raw
-score, but it optimizes a different target from contract compilation.
+consulted. This makes validation-selected preprocessing a comparator rather
+than the mechanism being proposed. A validation selector may prefer a quantile
+map because it improves held-out score; RANC may reject the same map if the
+contract requires metric tail distances, invertibility, or sparse-zero
+preservation. Conversely, RANC may compile a conservative no-op when every
+candidate violates a hard clause. It optimizes a different target from AutoML:
+minimum-complexity legal policy under declared contracts and audit cost, with
+rejected candidates, downgrades, no-ops, and falsification results recorded.
 
 \paragraph{Leakage, documentation, and audit artifacts.}
 Data leakage work motivates treating preprocessing statistics as part of the
 learning procedure rather than as dataset-level constants
 \cite{kaufman2012leakage}. Pipeline APIs reduce accidental full-dataset fitting,
-but usually leave no normalization-specific artifact explaining which split was
-visible, which clauses were required, or which candidate failed. Dataset and
-model documentation efforts make assumptions, uses, and evaluation contexts
-inspectable \cite{gebru2021datasheets,mitchell2019modelcards}. RANC extends this
-stance to the normalization decision itself: every selected transform is paired
-with the licensing contract, train-only evidence, and falsification checks.
+but fit discipline alone is not a normalization contract. A transform can be fit
+on the correct fold and still be illegal because it densifies sparse inputs,
+erases declared tail signal, violates monotonicity, or lacks a required inverse.
+Dataset and model documentation efforts make assumptions, uses, and evaluation
+contexts inspectable \cite{gebru2021datasheets,mitchell2019modelcards}. RANC
+extends this documentation stance to the normalization decision itself: every
+selected transform is paired with the licensing contract, train-only evidence,
+candidate rejections, downgrade/no-op reasons, and falsification checks. The
+audit target is deliberately narrower than a dataset sheet or model card but
+more operational: it explains why this fitted normalizer was legal for this
+split and contract.
 
 \paragraph{Neural normalization and bounded alternatives.}
 Neural normalizers act inside learned models, including BatchNorm, LayerNorm,
 \mbox{GroupNorm}, and \mbox{RMSNorm}; bounded alternatives such as Dynamic Tanh
 revisit whether explicit normalization layers are always required
 \cite{ioffe2015batch,ba2016layer,wu2018group,zhang2019rmsnorm,zhu2025dyt}.
-Those methods target optimization and representation stability. RANC's neural
-path is intentionally scoped as an exploratory adapter that exposes axis choice,
-centering choice, saturation, and train versus inference audit behavior under
-the same contract language. The central contribution remains the preprocessing
-compiler for tabular pipelines.
+Those methods target optimization dynamics and representation stability inside
+neural architectures. RANC addresses a different layer of the stack: the
+pre-model decision about which data normalization is legal under declared
+invariances. Its neural path is intentionally scoped as an exploratory adapter
+that exposes axis choice, centering choice, saturation, and train versus
+inference audit behavior under the same contract language. The central
+contribution remains the preprocessing compiler for tabular pipelines; neural
+claims should be read as interface coverage until larger neural benchmarks are
+run.
 
 \section{Method}
 
