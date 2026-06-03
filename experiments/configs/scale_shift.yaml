@@ -1,0 +1,17 @@
+random_state: 3
+output_dir: outputs/scale_shift
+dataset:
+  kind: scale_shift_regression
+baselines:
+  - none
+  - standard
+  - robust
+  - minmax
+  - ranc
+constraints:
+  global:
+    hard_clauses:
+      enforce_scale_invariance: true
+      preserve_monotonicity: true
+      allow_inverse_transform: true
+

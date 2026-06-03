@@ -1,0 +1,72 @@
+seeds: [0, 1, 2, 3, 4]
+output_dir: outputs/benchmark
+benchmarks:
+  - name: outlier_noise
+    dataset:
+      kind: outlier_noise
+    baselines: [none, standard, robust, maxabs, quantile, ranc]
+    constraints:
+      global:
+        hard_clauses:
+          preserve_monotonicity: true
+          allow_inverse_transform: true
+          enforce_scale_invariance: true
+
+  - name: outlier_signal
+    dataset:
+      kind: outlier_signal
+    baselines: [none, standard, robust, quantile, ranc]
+    constraints:
+      global:
+        hard_clauses:
+          preserve_extreme_signal: true
+          preserve_monotonicity: true
+          allow_inverse_transform: true
+          enforce_scale_invariance: true
+
+  - name: sparse
+    dataset:
+      kind: sparse_classification
+    baselines: [none, standard, robust, maxabs, ranc]
+    constraints:
+      global:
+        hard_clauses:
+          preserve_zero: true
+          preserve_monotonicity: true
+          enforce_scale_invariance: true
+
+  - name: temporal_drift
+    dataset:
+      kind: temporal_drift
+    baselines: [none, standard, robust, selector, ranc]
+    constraints:
+      global:
+        hard_clauses:
+          enforce_scale_invariance: true
+          preserve_monotonicity: true
+          allow_inverse_transform: true
+        soft_clauses:
+          prefer_drift_monitor: 1.0
+
+  - name: scale_shift
+    dataset:
+      kind: scale_shift_regression
+    baselines: [none, standard, robust, minmax, ranc]
+    constraints:
+      global:
+        hard_clauses:
+          enforce_scale_invariance: true
+          preserve_monotonicity: true
+          allow_inverse_transform: true
+
+  - name: additive_shift
+    dataset:
+      kind: additive_shift_classification
+    baselines: [none, standard, robust, minmax, ranc]
+    constraints:
+      global:
+        hard_clauses:
+          enforce_scale_invariance: true
+          enforce_shift_invariance: true
+          preserve_monotonicity: true
+          allow_inverse_transform: true

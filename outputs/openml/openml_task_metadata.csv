@@ -1,0 +1,16 @@
+enabled,exclude_reason,name,openml_id,openml_name,seeds,source,status,target,task
+True,,openml_iris,61,,"0,1,2",openml,included,class,classification
+True,,openml_credit_g,31,,"0,1,2",uci_via_openml,included,class,classification
+True,,openml_spambase,44,,"0,1,2",uci_via_openml,included,class,classification
+True,,openml_wine_quality,287,,"0,1,2",uci_via_openml,included,quality,regression
+True,,openml_diabetes,37,,"0,1,2",uci_via_openml,included,class,classification
+True,,openml_credit_approval,29,,"0,1,2",uci_via_openml,included,class,classification
+True,,openml_balance_scale,11,,"0,1,2",uci_via_openml,included,class,classification
+True,,openml_banknote_authentication,1462,,"0,1,2",uci_via_openml,included,,classification
+True,,openml_wdbc,1510,,"0,1,2",uci_via_openml,included,,classification
+True,,openml_vehicle,54,,"0,1,2",uci_via_openml,included,,classification
+True,,openml_tic_tac_toe,50,,"0,1,2",uci_via_openml,included,,classification
+True,,openml_cmc,23,,"0,1,2",uci_via_openml,included,,classification
+False,too large for CPU smoke suite; reserved for full-scale benchmark runs,openml_mnist_784,554,,"0,1,2",openml,excluded,,classification
+False,larger multiclass task excluded from quick public smoke suite,openml_letter,6,,"0,1,2",openml,excluded,,classification
+False,larger mixed-categorical benchmark reserved for extended suite after runtime budget review,openml_adult,1590,,"0,1,2",uci_via_openml,excluded,,classification

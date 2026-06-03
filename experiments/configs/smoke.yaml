@@ -1,0 +1,17 @@
+random_state: 0
+output_dir: outputs/smoke
+dataset:
+  kind: outlier_noise
+baselines:
+  - none
+  - standard
+  - robust
+  - maxabs
+  - ranc
+constraints:
+  global:
+    hard_clauses:
+      preserve_monotonicity: true
+      allow_inverse_transform: true
+      enforce_scale_invariance: true
+

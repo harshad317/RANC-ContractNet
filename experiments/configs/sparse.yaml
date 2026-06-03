@@ -1,0 +1,17 @@
+random_state: 1
+output_dir: outputs/sparse
+dataset:
+  kind: sparse_classification
+baselines:
+  - none
+  - standard
+  - robust
+  - maxabs
+  - ranc
+constraints:
+  global:
+    hard_clauses:
+      preserve_zero: true
+      preserve_monotonicity: true
+      enforce_scale_invariance: true
+

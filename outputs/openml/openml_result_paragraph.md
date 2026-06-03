@@ -1,0 +1,1 @@
+The public benchmark runner configured 15 OpenML/UCI-style tasks: 12 completed, 0 failed during fetch/run, and 3 were excluded by policy. The completed tasks produced 81 aggregate scaler rows. It stores metrics, table artifacts, and RANC audits only; raw public datasets are fetched at runtime. RANC rows present: 12. Mean RANC audit pass rate: 1.00.

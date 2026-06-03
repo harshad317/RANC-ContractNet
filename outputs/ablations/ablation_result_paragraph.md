@@ -1,0 +1,1 @@
+On the ablation benchmark, full RANC recorded 1 signal-risk ledger rows, 10 rejected candidates, and 0 policy downgrades. Disabling the ledger reduced ledger rows to 0; forcing incompatible hard clauses produced 3 downgrades; and the validation selector chose quantile without producing a RANC audit.

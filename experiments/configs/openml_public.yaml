@@ -1,0 +1,113 @@
+seeds: [0, 1, 2]
+output_dir: outputs/openml
+defaults:
+  baselines: [none, standard, robust, maxabs, quantile, selector, ranc]
+  constraints:
+    global:
+      hard_clauses:
+        preserve_monotonicity: true
+        allow_inverse_transform: true
+        enforce_scale_invariance: true
+tasks:
+  - name: openml_iris
+    enabled: true
+    source: openml
+    openml_id: 61
+    target: class
+    task: classification
+    baselines: [none, standard, robust, maxabs, selector, ranc]
+
+  - name: openml_credit_g
+    enabled: true
+    source: uci_via_openml
+    openml_id: 31
+    target: class
+    task: classification
+
+  - name: openml_spambase
+    enabled: true
+    source: uci_via_openml
+    openml_id: 44
+    target: class
+    task: classification
+
+  - name: openml_wine_quality
+    enabled: true
+    source: uci_via_openml
+    openml_id: 287
+    target: quality
+    task: regression
+    baselines: [none, standard, robust, minmax, selector, ranc]
+
+  - name: openml_diabetes
+    enabled: true
+    source: uci_via_openml
+    openml_id: 37
+    target: class
+    task: classification
+
+  - name: openml_credit_approval
+    enabled: true
+    source: uci_via_openml
+    openml_id: 29
+    target: class
+    task: classification
+
+  - name: openml_balance_scale
+    enabled: true
+    source: uci_via_openml
+    openml_id: 11
+    target: class
+    task: classification
+
+  - name: openml_banknote_authentication
+    enabled: true
+    source: uci_via_openml
+    openml_id: 1462
+    task: classification
+    baselines: [none, standard, robust, maxabs, selector, ranc]
+
+  - name: openml_wdbc
+    enabled: true
+    source: uci_via_openml
+    openml_id: 1510
+    task: classification
+
+  - name: openml_vehicle
+    enabled: true
+    source: uci_via_openml
+    openml_id: 54
+    task: classification
+
+  - name: openml_tic_tac_toe
+    enabled: true
+    source: uci_via_openml
+    openml_id: 50
+    task: classification
+
+  - name: openml_cmc
+    enabled: true
+    source: uci_via_openml
+    openml_id: 23
+    task: classification
+
+  - name: openml_mnist_784
+    enabled: false
+    source: openml
+    openml_id: 554
+    task: classification
+    exclude_reason: too large for CPU smoke suite; reserved for full-scale benchmark runs
+
+  - name: openml_letter
+    enabled: false
+    source: openml
+    openml_id: 6
+    task: classification
+    exclude_reason: larger multiclass task excluded from quick public smoke suite
+
+  - name: openml_adult
+    enabled: false
+    source: uci_via_openml
+    openml_id: 1590
+    task: classification
+    exclude_reason: larger mixed-categorical benchmark reserved for extended suite after runtime budget review

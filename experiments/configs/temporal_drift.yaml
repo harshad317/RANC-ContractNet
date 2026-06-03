@@ -1,0 +1,19 @@
+random_state: 4
+output_dir: outputs/temporal_drift
+dataset:
+  kind: temporal_drift
+baselines:
+  - none
+  - standard
+  - robust
+  - selector
+  - ranc
+constraints:
+  global:
+    hard_clauses:
+      enforce_scale_invariance: true
+      preserve_monotonicity: true
+      allow_inverse_transform: true
+    soft_clauses:
+      prefer_drift_monitor: 1.0
+

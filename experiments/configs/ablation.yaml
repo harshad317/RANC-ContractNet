@@ -1,0 +1,17 @@
+random_state: 0
+output_dir: outputs/ablation
+ablation_output_dir: outputs/ablations
+dataset:
+  kind: outlier_noise
+constraints:
+  global:
+    hard_clauses:
+      preserve_monotonicity: true
+      allow_inverse_transform: true
+      enforce_scale_invariance: true
+  x0:
+    hard_clauses:
+      damp_outliers: true
+      enforce_shift_invariance: false
+    transform_preferences:
+      - log1p

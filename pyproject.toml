@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ranc-contractnet"
+version = "0.1.0"
+description = "RANC-ContractNet: contract-driven normalization compiler with audits and falsification tests."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+  {name = "Harshad Hemant Patil", email = "hhpatil001@gmail.com"}
+]
+keywords = ["normalization", "preprocessing", "machine-learning", "audit", "invariance"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "numpy>=1.23",
+  "pandas>=1.5",
+  "pydantic>=2.0",
+  "PyYAML>=6.0",
+  "scikit-learn>=1.2",
+  "scipy>=1.9",
+  "z3-solver>=4.12",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7",
+  "ruff>=0.4",
+]
+experiments = [
+  "matplotlib>=3.7",
+  "openml>=0.14",
+]
+solver = [
+  "z3-solver>=4.12",
+]
+torch = [
+  "torch>=2.0",
+]
+all = [
+  "matplotlib>=3.7",
+  "openml>=0.14",
+  "pytest>=7",
+  "ruff>=0.4",
+  "torch>=2.0",
+  "z3-solver>=4.12",
+]
+
+[project.urls]
+Homepage = "https://example.org/ranc-contractnet"
+Repository = "https://example.org/ranc-contractnet"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"

@@ -1,0 +1,24 @@
+random_state: 5
+output_dir: outputs/openml_template
+dataset:
+  kind: openml
+  id: 31
+  target: class
+  task: classification
+  test_size: 0.35
+baselines:
+  - none
+  - standard
+  - robust
+  - maxabs
+  - quantile
+  - power
+  - selector
+  - ranc
+constraints:
+  global:
+    hard_clauses:
+      preserve_monotonicity: true
+      allow_inverse_transform: true
+      enforce_scale_invariance: true
+

@@ -1,0 +1,17 @@
+random_state: 2
+output_dir: outputs/outlier_signal
+dataset:
+  kind: outlier_signal
+baselines:
+  - none
+  - standard
+  - robust
+  - quantile
+  - ranc
+constraints:
+  global:
+    hard_clauses:
+      preserve_extreme_signal: true
+      preserve_monotonicity: true
+      allow_inverse_transform: true
+
