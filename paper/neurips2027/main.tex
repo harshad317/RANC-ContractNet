@@ -56,20 +56,20 @@ which signal must survive. Validation-score scaler search can hide illegal
 choices: rank maps can erase metric signal, robust scaling can damp rare
 positives, centering can densify sparse inputs, and fitting outside the active
 training fold can leak future information. RANC-ContractNet is not a new
-scaler. It is a contract compiler that treats normalization as invariance
-compilation rather than AutoML scaler search. Given a training fold, a declared
-contract, and implemented checkers, it builds regime cards, records
+scaler. It is a regime-aware contract compiler that treats normalization as
+invariance compilation rather than AutoML scaler search. Given a training fold, a
+declared contract, and implemented checkers, it builds regime cards, records
 signal-risk ledger rows, rejects hard-clause violations, selects the least
 complex admissible policy, and gates acceptance with falsification tests. The
 fitted sklearn transformer returns transformed data together with a replayable
 audit report containing fitted statistics, rejected candidates, downgrades,
 drift monitors, and test outcomes. The guarantee is relative to the declared
-contract: accepted policies pass checked clauses on stated support, while
-failures become recorded downgrades or no-ops. In paired outlier worlds where
-identical extremes are either noise or rare signal, correct contracts improve
-the targeted failure metric over wrong-contract controls. The claim is
-auditable legality under declared invariances and implemented checkers, not
-universal predictive dominance.
+contract and checker support: accepted policies pass checked clauses on stated
+support, while failures become recorded downgrades or no-ops. In paired outlier
+worlds where identical extremes are either noise or rare signal, correct
+contracts improve the targeted failure metric over wrong-contract controls. The
+claim is auditable legality under declared invariances and implemented checkers,
+not universal predictive dominance or leaderboard status.
 \end{abstract}
 
 \section{Introduction}
@@ -98,6 +98,12 @@ required, and whether rare extremes are corruptions or signal. That contract
 should affect the selected policy before validation performance is consulted,
 and the final transform should leave enough evidence for a reviewer to replay
 why it was legal.
+
+This changes the reviewer question. Instead of asking only which scaler improved
+held-out score, the pipeline must answer which variation the normalizer was
+licensed to remove, which evidence was allowed to fit it, which candidate
+policies were rejected, and which falsification tests could still overturn the
+choice.
 
 RANC-ContractNet treats normalization as a compilation problem. The input is a
 training fold plus a contract over invariance, signal risk, split discipline,
@@ -149,6 +155,8 @@ The claim is deliberately narrow. RANC-ContractNet is not AutoML under another
 name, and it does not prove that user-supplied semantics are correct. Wrong
 contracts can preserve the wrong structure; the artifact exposes this through
 wrong-contract controls, signal-risk ledger rows, and degraded targeted metrics.
+The intended output is therefore a reviewable normalization decision, not a
+promise that one normalizer will dominate every validation-selected alternative.
 
 \section{Related Work}
 
@@ -428,8 +436,11 @@ invisible in aggregate predictive metrics: sparse representation, train-prefix
 fitting, drift monitoring, ledger rows, downgrades, and no-op behavior. Level 3
 tests public-data execution: can the same code path run on OpenML/UCI tasks,
 retain exclusions and audits, and report predictive deltas without turning the
-paper into a universal scaler leaderboard? Neural pilots remain exploratory and
-are not used as central evidence.
+paper into a universal scaler leaderboard? This order is intentional: the paired
+semantic intervention is the main causal evidence, safety checks test whether
+hard clauses are enforced, and public benchmarks test execution breadth rather
+than leaderboard status. Neural pilots remain exploratory and are not used as
+central evidence.
 
 \begin{table}[H]
 \centering
@@ -610,6 +621,12 @@ faithfully preserve the wrong structure; the point is that this failure is
 visible in wrong-contract controls, ledger rows, and degraded targeted metrics
 rather than hidden inside a selected scaler name.
 
+This is the adoption boundary as well as the evaluation boundary. A practitioner
+should reach for RANC when a preprocessing choice must be justified to a domain
+reviewer, an auditor, a temporal deployment protocol, or a sparse-feature
+representation contract. A practitioner optimizing only held-out score should
+expect a validation selector to be the more direct tool.
+
 The approach would be weakened or falsified by future preregistered runs in at
 least three ways. First, paired semantic tests could show that correct contracts
 no longer improve the targeted failure metric over wrong-contract controls.
@@ -664,6 +681,10 @@ grouped splits make future statistics illegal; rare extremes may be signal
 rather than contamination; inverse transforms are required for reporting; or a
 deployment pipeline needs a replayable audit of preprocessing decisions. In
 these settings, RANC makes the normalizer answerable to an explicit contract.
+Concrete examples include sparse count features where centering would change the
+meaning of zero, temporal forecasting where future statistics are leakage, rare
+event workflows where extremes may be target signal, and regulated tabular
+pipelines where preprocessing must be replayed and justified.
 
 The method should not be used as a drop-in promise of higher accuracy, as a
 substitute for domain knowledge, or as evidence that the supplied contract is
@@ -714,9 +735,9 @@ when legality cannot be established.
 The intended role is therefore not to replace all scaler selection, but to make
 high-stakes or semantically constrained preprocessing reviewable. If a
 normalizer removes variation, RANC asks what licensed that removal, which
-training evidence was used, which candidates were rejected, and which tests
-could falsify the choice. That shift from unnamed preprocessing to checked
-invariance compilation is the contribution.
+training evidence was used, which candidates were rejected, which audit trail
+was serialized, and which tests could falsify the choice. That shift from
+unnamed preprocessing to checked invariance compilation is the contribution.
 
 \begingroup
 \scriptsize
