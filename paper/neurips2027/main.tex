@@ -42,19 +42,19 @@ choices: rank maps can erase metric signal, robust scaling can damp rare
 positives, centering can densify sparse inputs, and fitting outside the active
 training fold can leak future information. RANC-ContractNet is not a new
 scaler. It is a regime-aware contract compiler that treats normalization as
-invariance compilation rather than AutoML scaler search. Given a training fold, a
-declared contract, and implemented checkers, it builds regime cards, records
-signal-risk ledger rows, rejects hard-clause violations, selects the least
-complex admissible policy, and gates acceptance with falsification tests. The
-fitted sklearn transformer returns transformed data together with a replayable
-audit report containing fitted statistics, rejected candidates, downgrades,
-drift monitors, and test outcomes. The guarantee is relative to the declared
-contract and checker support: accepted policies pass checked clauses on stated
-support, while failures become recorded downgrades or no-ops. In paired outlier
-worlds where identical extremes are either noise or rare signal, correct
-contracts improve the targeted failure metric over wrong-contract controls. The
-claim is auditable legality under declared invariances and implemented checkers,
-not universal predictive dominance or leaderboard status.
+invariance compilation rather than AutoML scaler search. Given a training fold
+and a declared contract, it builds regime cards, records signal-risk ledger
+rows, rejects hard-clause violations, selects the least complex admissible
+policy, and gates acceptance with falsification tests. The fitted sklearn
+transformer returns transformed data and a replayable audit report containing
+fitted statistics, rejected candidates, downgrades, drift monitors, and test
+outcomes. The guarantee is relative to the declared contract and checker
+support: accepted policies pass checked clauses on stated support, while
+failures become recorded downgrades or no-ops. In paired outlier worlds where
+identical extremes are either noise or rare signal, correct contracts improve
+the targeted failure metric over wrong-contract controls. The claim is auditable
+legality under declared invariances and implemented checkers, not universal
+predictive dominance or leaderboard status.
 \end{abstract}
 
 \section{Introduction}
@@ -142,6 +142,8 @@ contracts can preserve the wrong structure; the artifact exposes this through
 wrong-contract controls, signal-risk ledger rows, and degraded targeted metrics.
 The intended output is therefore a reviewable normalization decision, not a
 promise that one normalizer will dominate every validation-selected alternative.
+The fair reviewer question is whether legality, evidence, and failure modes are
+visible, not whether every dataset rewards the same scaler.
 
 \section{Related Work}
 
@@ -176,6 +178,8 @@ preservation. Conversely, RANC may compile a conservative no-op when every
 candidate violates a hard clause. It optimizes a different target from AutoML:
 minimum-complexity legal policy under declared contracts and audit cost, with
 rejected candidates, downgrades, no-ops, and falsification results recorded.
+Consequently, a validation selector can be stronger on raw score while still
+answering a different question from the one RANC is designed to audit.
 
 \paragraph{Leakage, documentation, and audit artifacts.}
 Data leakage work motivates treating preprocessing statistics as part of the
@@ -432,10 +436,10 @@ central evidence.
 \scriptsize
 \setlength{\tabcolsep}{4pt}
 \renewcommand{\arraystretch}{0.86}
-\caption{Evidence map for the contract-compilation claim. Rows are ordered by
-claim strength: semantic intervention first, safety/audit evidence second, and
-public execution evidence third. Each row names the failure it should expose and
-the artifact that must make the result auditable; no row is a universal scaler
+\caption{Evidence map for the contract-compilation claim. The takeaway is the
+evaluation order: first show that contracts change the legal policy, then show
+that safety clauses are observable, and only then report public execution
+evidence. Rows are ordered by claim strength, and no row is a universal scaler
 leaderboard.}
 \label{tab:claims-tested}
 \resizebox{\linewidth}{!}{%
@@ -458,12 +462,13 @@ Artifact checks & claims can be regenerated from package & local state or identi
 \centering
 \includegraphics[width=\linewidth]{figures/ranc_visual_summary.pdf}
 % Source figure data: contract_delta_table.tex and openml_win_loss_table.tex.
-\caption{Visual summary of the method and two main quantitative summaries.
-Panel A is the mechanism: contracts constrain policy selection before validation
-score. Panel B is the decisive semantic test: changing declared outlier meaning
-changes the targeted failure metric. Panel C is the scoped public-data check:
-signed OpenML/UCI deltas show where RANC helps or loses after metric-direction
-alignment, with full task tables and exclusions retained in the artifact.}
+\caption{Visual summary of the method and two main quantitative summaries. Panel
+A is the mechanism: contracts constrain policy selection before validation
+score. Panel B is the decisive semantic test: when declared outlier meaning
+changes, the targeted failure metric changes in the expected direction. Panel C
+is the scoped public-data check: signed OpenML/UCI deltas show where RANC helps
+or loses after metric-direction alignment, with full task tables and exclusions
+retained in the artifact.}
 \label{fig:ranc-visual-summary}
 \end{figure}
 
@@ -501,9 +506,10 @@ violation defined as $1-\mathrm{recall}$.
 
 \begin{table}[H]
 \centering
-\caption{Decisive semantic intervention on paired outlier worlds. The data
-positions are held fixed; only the declared contract changes, so noise compiles
-$x_0$ to log1p while signal compiles $x_0$ to z-score.}
+\caption{Decisive semantic intervention on paired outlier worlds. The same rare
+positions are reused across worlds; only the declared contract changes. The
+takeaway is that noise compiles $x_0$ to log1p while signal compiles $x_0$ to
+z-score, exposing the wrong-contract control.}
 \label{tab:contract-causal}
 \resizebox{\linewidth}{!}{\inputoutlierartifact{contract_causal_table.tex}}
 \end{table}
@@ -530,9 +536,10 @@ are visible as artifacts.
 \begin{table}[H]
 \centering
 \small
-\caption{Artifact-level safety evidence for hard clauses. Full sparse and
-temporal tables are supplementary; the main paper shows the audit properties
-that correspond to sparse representation and train-prefix fitting.}
+\caption{Artifact-level safety evidence for hard clauses. The takeaway is that
+the audit exposes properties that ordinary score tables often miss: sparse
+representation is preserved and temporal fitting uses only the training prefix.
+Full sparse and temporal tables are supplementary.}
 \label{tab:safety-summary}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lllll}
@@ -601,10 +608,11 @@ stronger on raw public score. A selector that searches preprocessing choices by
 held-out outcome optimizes a different objective from a contract compiler. Its
 score advantage is informative, but it does not by itself invalidate the claim
 that normalization decisions should be legal under declared invariances and
-auditable after fitting. Conversely, if the declared contract is wrong, RANC can
-faithfully preserve the wrong structure; the point is that this failure is
-visible in wrong-contract controls, ledger rows, and degraded targeted metrics
-rather than hidden inside a selected scaler name.
+auditable after fitting. This is why the selector baseline is reported as a
+pressure test rather than suppressed. Conversely, if the declared contract is
+wrong, RANC can faithfully preserve the wrong structure; the point is that this
+failure is visible in wrong-contract controls, ledger rows, and degraded
+targeted metrics rather than hidden inside a selected scaler name.
 
 This is the adoption boundary as well as the evaluation boundary. A practitioner
 should reach for RANC when a preprocessing choice must be justified to a domain
@@ -632,11 +640,10 @@ compare against a validation-search preprocessing selector.
 
 \begin{table}[H]
 \centering
-\caption{Ablation evidence on the outlier-noise smoke benchmark. The table
-reports audited behavior as well as predictive metrics: removing the ledger
-removes ledger rows, incompatible hard clauses trigger downgrades, removing
-outlier damping changes selected policies, and the validation selector produces
-no RANC audit.}
+\caption{Ablation evidence on the outlier-noise smoke benchmark. The takeaway is
+that RANC components leave observable traces: removing the ledger removes ledger
+rows, incompatible hard clauses trigger downgrades, removing outlier damping
+changes selected policies, and the validation selector produces no RANC audit.}
 \label{tab:ablations}
 \resizebox{\linewidth}{!}{\inputrepoartifact{outputs/ablations/ablation_table.tex}}
 \end{table}

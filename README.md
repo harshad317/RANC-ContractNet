@@ -13,7 +13,7 @@ as an exploratory extension.
 
 - Branch: `main`
 - Current artifact release:
-  [paper-revision-draft-2026-06-03-v4](https://github.com/harshad317/RANC-ContractNet/releases/tag/paper-revision-draft-2026-06-03-v4)
+  [paper-revision-draft-2026-06-03-v5](https://github.com/harshad317/RANC-ContractNet/releases/tag/paper-revision-draft-2026-06-03-v5)
 - License: MIT
 - Citation metadata: `CITATION.cff`
 - DOI status: pending; `.zenodo.json` is included for a future Zenodo archive
@@ -198,14 +198,14 @@ If you use RANC-ContractNet, cite the software artifact:
   year = {2026},
   version = {0.1.0},
   url = {https://github.com/harshad317/RANC-ContractNet},
-  note = {Artifact release: paper-revision-draft-2026-06-03-v4}
+  note = {Artifact release: paper-revision-draft-2026-06-03-v5}
 }
 ```
 
 The current artifact release attaches the supplementary bundle with a SHA-256
-sidecar and supersedes `paper-revision-draft-2026-06-03-v3` after simplifying
-the paper and artifact identity path. A DOI should be minted from Zenodo after
-the next stable release or preprint checkpoint.
+sidecar and supersedes `paper-revision-draft-2026-06-03-v4` after the paper
+submission polish pass. A DOI should be minted from Zenodo after the next stable
+release or preprint checkpoint.
 
 ## License
 

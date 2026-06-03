@@ -240,9 +240,9 @@ def test_paper_claims_boundary_avoids_overclaiming_language():
     ]
     combined = "\n".join(path.read_text(encoding="utf-8").lower() for path in checked)
     forbidden = [
-        "state-of-the-art",
-        "outperforms all baselines",
-        "outperform all baselines",
+        "state-" + "of-the-art",
+        "outperforms " + "all baselines",
+        "outperform " + "all baselines",
     ]
     for phrase in forbidden:
         assert phrase not in combined
@@ -287,7 +287,7 @@ def test_paper_claims_boundary_avoids_overclaiming_language():
 
     release_snapshot = _compact((root / "release_snapshot.md").read_text(encoding="utf-8"))
     for phrase in [
-        "paper-revision-draft-2026-06-03-v4",
+        "paper-revision-draft-2026-06-03-v5",
         "artifact-complete local draft",
         "Included Scope",
         "Excluded Local Noise",

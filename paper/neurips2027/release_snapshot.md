@@ -1,18 +1,16 @@
 # Local Release Snapshot
 
-Snapshot target: `paper-revision-draft-2026-06-03-v4`
+Snapshot target: `paper-revision-draft-2026-06-03-v5`
 
 Status: artifact-complete local draft as of 2026-06-03. This snapshot freezes
 the current implementation, paper scaffold, generated summary artifacts,
 reviewer checks, and visually checked paper PDFs in a GitHub prerelease tag. It
-supersedes `paper-revision-draft-2026-06-03-v3` after simplifying the paper and
-artifact identity path and using only affiliation, not job title, in the paper
-author block. The `v3` checkpoint synchronized repository metadata to the
-corrected release checkpoint. The `v2` checkpoint superseded
-`paper-revision-draft-2026-06-03` after visual PDF QA of the generated figure
-assets. It is not yet an official conference submission because the final
-NeurIPS 2027 style file and submission portal requirements are not available in
-this workspace.
+supersedes `paper-revision-draft-2026-06-03-v4` after the paper submission
+polish pass compressed the abstract, sharpened captions, and strengthened
+reviewer-objection framing. The `v4` checkpoint simplified the paper and artifact
+identity path and used only affiliation, not job title, in the author block. It
+is not yet an official conference submission because the final NeurIPS 2027 style
+file and submission portal requirements are not available in this workspace.
 
 ## Included Scope
 
@@ -54,7 +52,7 @@ hash files are the source of truth for zip integrity and are not committed.
 The snapshot supports a contract-compilation claim: RANC-ContractNet makes
 normalization legality auditable relative to declared invariance contracts. It
 does not claim universal predictive dominance, automatic discovery of true
-domain semantics, or state-of-the-art results on every dataset. Public OpenML/UCI
+domain semantics, or top leaderboard results on every dataset. Public OpenML/UCI
 results should be read as scoped execution evidence alongside the paired
 semantic stress tests and falsification artifacts.
 
