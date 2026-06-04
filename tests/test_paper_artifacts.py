@@ -298,7 +298,7 @@ def test_paper_claims_boundary_avoids_overclaiming_language():
 
     release_snapshot = _compact((root / "release_snapshot.md").read_text(encoding="utf-8"))
     for phrase in [
-        "paper-revision-draft-2026-06-03-v5",
+        "paper-revision-draft-2026-06-04-v6",
         "artifact-complete local draft",
         "Included Scope",
         "Excluded Local Noise",

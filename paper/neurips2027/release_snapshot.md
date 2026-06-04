@@ -1,16 +1,16 @@
 # Local Release Snapshot
 
-Snapshot target: `paper-revision-draft-2026-06-03-v5`
+Snapshot target: `paper-revision-draft-2026-06-04-v6`
 
-Status: artifact-complete local draft as of 2026-06-03. This snapshot freezes
+Status: artifact-complete local draft as of 2026-06-04. This snapshot freezes
 the current implementation, paper scaffold, generated summary artifacts,
 reviewer checks, and visually checked paper PDFs in a GitHub prerelease tag. It
-supersedes `paper-revision-draft-2026-06-03-v4` after the paper submission
-polish pass compressed the abstract, sharpened captions, and strengthened
-reviewer-objection framing. The `v4` checkpoint simplified the paper and artifact
-identity path and used only affiliation, not job title, in the author block. It
-is not yet an official conference submission because the final NeurIPS 2027 style
-file and submission portal requirements are not available in this workspace.
+supersedes `paper-revision-draft-2026-06-03-v5` after adding a temporal
+rare-event case study, wiring it into reviewer regeneration checks, and keeping
+the paper render at 10 pages. The `v5` checkpoint compressed the abstract,
+sharpened captions, and strengthened reviewer-objection framing. It is not yet
+an official conference submission because the final NeurIPS 2027 style file and
+submission portal requirements are not available in this workspace.
 
 ## Included Scope
 
@@ -20,8 +20,8 @@ file and submission portal requirements are not available in this workspace.
 - Paper source, bibliography, checklist, supplementary material, readiness map,
   and generated figure assets under `paper/neurips2027`.
 - Paper-facing summary outputs under `outputs`, including paired outlier,
-  sparse, temporal drift, ablation, synthetic benchmark, and OpenML/UCI summary
-  tables.
+  sparse, temporal drift, temporal rare-event case study, ablation, synthetic
+  benchmark, and OpenML/UCI summary tables.
 
 ## Excluded Local Noise
 

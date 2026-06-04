@@ -8,10 +8,10 @@ authors:
     email: hhpatil001@gmail.com
     affiliation: Springer Nature
 version: "0.1.0"
-date-released: "2026-06-03"
+date-released: "2026-06-04"
 license: MIT
 repository-code: "https://github.com/harshad317/RANC-ContractNet"
-url: "https://github.com/harshad317/RANC-ContractNet/releases/tag/paper-revision-draft-2026-06-03-v5"
+url: "https://github.com/harshad317/RANC-ContractNet/releases/tag/paper-revision-draft-2026-06-04-v6"
 keywords:
   - normalization
   - preprocessing
