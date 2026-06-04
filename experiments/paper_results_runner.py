@@ -25,6 +25,7 @@ DEFAULT_CONFIG_PATHS = {
     "outlier_pair_config": Path("experiments/configs/outlier_pair.yaml"),
     "sparse_config": Path("experiments/configs/sparse.yaml"),
     "temporal_config": Path("experiments/configs/temporal_drift.yaml"),
+    "case_study_config": Path("experiments/configs/case_study_temporal_rare_event.yaml"),
     "ablation_config": Path("experiments/configs/ablation.yaml"),
     "benchmark_config": Path("experiments/configs/benchmark.yaml"),
     "openml_config": Path("experiments/configs/openml_public.yaml"),
@@ -68,6 +69,13 @@ def run(config: Dict[str, Any] | None = None) -> List[Path]:
             DEFAULT_CONFIG_PATHS["temporal_config"],
         )
         artifacts.append(run_tabular(temporal_config)[0])
+
+    if cfg.get("run_case_study", True):
+        case_study_config = _config_from_path_or_mapping(
+            cfg.get("case_study_config"),
+            DEFAULT_CONFIG_PATHS["case_study_config"],
+        )
+        artifacts.append(run_tabular(case_study_config)[0])
 
     if cfg.get("run_ablation", True):
         ablation_config = _config_from_path_or_mapping(

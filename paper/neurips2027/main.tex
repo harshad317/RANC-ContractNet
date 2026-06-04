@@ -430,9 +430,9 @@ semantic intervention is the main causal evidence, safety checks test whether
 hard clauses are enforced, and public benchmarks test execution breadth rather
 than leaderboard status. This order also mirrors the expected reviewer
 objections: novelty requires a semantic intervention, safety requires visible
-hard-clause evidence, and usefulness requires public execution without hiding
-selector losses. Neural pilots remain exploratory and are not used as central
-evidence.
+hard-clause evidence, adoption requires a natural use case, and usefulness
+requires public execution without hiding selector losses. Neural pilots remain
+exploratory and are not used as central evidence.
 
 \begin{table}[H]
 \centering
@@ -453,6 +453,7 @@ Experiment & Claim tested & Failure mode exposed & Primary evidence \\
 Paired outlier worlds & contracts change legal policy & wrong semantics preserve/remove signal & correct vs wrong contract deltas \\
 Sparse safety & representation clauses are enforced & centering densifies implicit zeros & sparse output, nnz delta, failures \\
 Temporal drift & fitting is train-prefix only & future statistics leak into preprocessing & fit count and drift monitors \\
+Temporal rare-event case & adoption boundary is concrete & rare signal or future rows are mishandled & rare recall, train-only audit \\
 Ablations & audit components are observable & ledgers/downgrades disappear when removed & ledger rows, rejected candidates \\
 OpenML/UCI path & public runs are reproducible and scoped & raw-score selector optimizes another target & paired deltas, exclusion log \\
 Artifact checks & claims can be regenerated from package & local state or identity leaks into bundle & render, dryrun, SHA256, anonymization scan \\
@@ -564,6 +565,19 @@ fitted on 251 training samples only, emitted 5 drift monitors, and recorded
 maximum training-card drift 0.844. These are artifact-level checks of
 representation constraints and leakage/drift evidence, not leaderboard claims.
 
+\subsection{Level 2 auxiliary evidence: temporal rare-event case study}
+
+To make the adoption boundary concrete, the artifact includes a time-ordered
+rare-event case study: a drifting positive measurement whose rare extremes are
+declared possible signal rather than corruption. The contract requires
+monotonic, invertible preprocessing, forbids rank saturation on the rare-event
+feature, and records train-prefix fit metadata. RANC fit only the first 364
+time-ordered samples, retained rare-event recall 0.542, emitted 5 drift
+monitors, recorded 2 ledger rows, and rejected 14 candidates; the quantile
+baseline obtained rare-event recall 0.000. The full case-study table and audit
+summary remain in the artifact. This is adoption evidence rather than a new
+leaderboard claim.
+
 \subsection{Level 2 auxiliary evidence: broader benchmark harness}
 
 The multi-seed harness is reproducibility evidence rather than the central
@@ -602,9 +616,11 @@ structure is held fixed while only the declared semantics of extremes changes,
 and the correct contract reduces the scenario-specific failure mode relative to
 the wrong-contract control. Second, sparse and temporal checks show that
 representation and split constraints are visible in generated artifacts. Third,
-OpenML/UCI runs demonstrate a public-data execution path, audits for completed
-tasks, exclusion metadata, and paired predictive deltas; they are supportive but
-not central.
+the temporal rare-event case study shows the intended adoption setting: a
+domain-style preprocessing decision where train-prefix discipline and
+extreme-signal preservation must be auditable. Fourth, OpenML/UCI runs
+demonstrate a public-data execution path, audits for completed tasks, exclusion
+metadata, and paired predictive deltas; they are supportive but not central.
 
 The validation selector result is intentionally reported even where it is
 stronger on raw public score. A selector that searches preprocessing choices by
@@ -676,10 +692,6 @@ grouped splits make future statistics illegal; rare extremes may be signal
 rather than contamination; inverse transforms are required for reporting; or a
 deployment pipeline needs a replayable audit of preprocessing decisions. In
 these settings, RANC makes the normalizer answerable to an explicit contract.
-Concrete examples include sparse count features where centering would change the
-meaning of zero, temporal forecasting where future statistics are leakage, rare
-event workflows where extremes may be target signal, and regulated tabular
-pipelines where preprocessing must be replayed and justified.
 
 The method should not be used as a drop-in promise of higher accuracy, as a
 substitute for domain knowledge, or as evidence that the supplied contract is
@@ -701,26 +713,20 @@ documented suite, seeds, exclusions, and transient fetch or run failures.
 
 \subsection{Threats to validity and failure detection}
 
-The main threats to validity are concrete. First, contract validity is external
-to the compiler: underspecified contracts can produce conservative no-ops, and
-wrong declared semantics can make RANC preserve the wrong structure. Second,
-checker coverage is relative rather than global: exact clauses are checked on
-their stated domains, while numeric falsification tests certify only their
-deterministic audit support. Third, evidence breadth remains scoped: paired
-semantic worlds test causality, sparse and temporal checks test safety, and
-OpenML/UCI runs test public execution rather than broad predictive dominance.
-Fourth, rare-signal ambiguity requires domain contracts or supervised opt-in
-rather than compiler inference. Finally, drift monitors expose shift but do not
-choose retraining policy, and neural adapters remain exploratory until larger
-benchmarks justify central claims.
+The main threats to validity are concrete: contract validity is external to the
+compiler; checker coverage is relative rather than global; evidence breadth
+remains scoped; rare-signal ambiguity requires domain contracts or supervised
+opt-in; and drift monitors expose shift but do not choose retraining policy.
+Neural adapters remain exploratory until larger benchmarks justify central
+claims.
 
 RANC exposes rather than eliminates these threats. Reviewers should inspect
 downgrades, no-op reasons, rejected candidates, ledger rows, wrong-contract
 controls, drift monitors, predictive deltas, checker domains, and
 claims-boundary text. The method would need stronger evidence if those artifacts
-stopped exposing the listed failures, if audits passed while transformed data
-violated hard clauses, or if correct contracts did not outperform
-wrong-contract controls on targeted semantic stress tests.
+stopped exposing failures, if audits passed despite hard-clause violations, or
+if correct contracts did not beat wrong-contract controls on targeted semantic
+stress tests.
 
 \section{Conclusion}
 

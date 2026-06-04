@@ -18,6 +18,7 @@ def test_paper_scaffold_exists():
         "release_snapshot.md",
         "artifact_eval.md",
         "STYLE_STATUS.md",
+        "reviewer_packet.md",
     ]:
         path = root / name
         assert path.exists()
@@ -109,9 +110,15 @@ def test_main_paper_wires_first_decisive_result():
         "Decisive semantic intervention on paired outlier worlds",
         "\\subsection{Level 2: sparse and temporal safety checks}",
         "Artifact-level safety evidence for hard clauses",
+        "\\subsection{Level 2 auxiliary evidence: temporal rare-event case study}",
+        "temporal rare-event case study",
+        "RANC fit only the first 364",
+        "quantile baseline obtained rare-event recall 0.000",
+        "full case-study table and audit summary",
         "signed OpenML/UCI deltas show where RANC helps or loses",
         "The second evidence block tests hard clauses",
         "declared representation and split constraints",
+        "domain-style preprocessing decision where train-prefix discipline",
         "\\subsection{Level 3: public OpenML/UCI benchmark path}",
         "These results are public-data artifact evidence, not the central contract causality test",
         "\\label{tab:safety-summary}",
@@ -189,6 +196,8 @@ def test_main_paper_wires_first_decisive_result():
 
     assert Path("outputs/sparse/sparse_table.tex").exists()
     assert Path("outputs/temporal_drift/temporal_drift_table.tex").exists()
+    assert Path("outputs/case_studies/temporal_rare_event_table.tex").exists()
+    assert Path("outputs/case_studies/temporal_rare_event_audit.md").exists()
     assert Path("outputs/ablations/ablation_table.tex").exists()
     assert Path("outputs/benchmark/benchmark_table.tex").exists()
     assert Path("outputs/openml/openml_table.tex").exists()
@@ -205,6 +214,7 @@ def test_main_paper_wires_first_decisive_result():
         "full task-level table",
         "outputs/sparse/sparse_table.tex",
         "outputs/temporal_drift/temporal_drift_table.tex",
+        "outputs/case_studies/temporal_rare_event_table.tex",
         "outputs/benchmark/benchmark_table.tex",
         "outputs/openml/openml_table.tex",
     ]:

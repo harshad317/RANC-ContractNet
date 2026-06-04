@@ -1,0 +1,1 @@
+In the temporal rare-event case study, RANC fit only the time-prefix training window (364 samples), kept rare-event recall at 0.542, emitted 5 drift monitors, recorded 2 signal-risk ledger rows, and rejected 14 illegal or higher-risk candidates.

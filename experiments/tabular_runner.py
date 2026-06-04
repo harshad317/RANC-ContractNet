@@ -19,7 +19,7 @@ import yaml
 from scipy import sparse
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.linear_model import LogisticRegression, Ridge
-from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, roc_auc_score
+from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, PowerTransformer, QuantileTransformer, RobustScaler, StandardScaler
@@ -33,6 +33,7 @@ from experiments.synthetic import (
     make_scale_shift_regression,
     make_sparse_classification,
     make_temporal_drift,
+    make_temporal_rare_event,
 )
 
 
@@ -127,6 +128,22 @@ def _dataset(config: Dict[str, Any]):
             "temporal_leakage_guard": True,
         }
         return X[:split], y[:split], X[split:], y[split:], "regression", metadata
+    if kind == "temporal_rare_event":
+        X, y, _, rare_mask = make_temporal_rare_event(random_state=seed)
+        split = int(0.7 * X.shape[0])
+        metadata = {
+            "dataset_kind": kind,
+            "split_strategy": "time_ordered",
+            "train_start_index": 0,
+            "train_end_index": split - 1,
+            "test_start_index": split,
+            "test_end_index": int(X.shape[0] - 1),
+            "temporal_leakage_guard": True,
+            "rare_event_train_rate": float(np.mean(y[:split])),
+            "rare_event_test_rate": float(np.mean(y[split:])),
+            "rare_extreme_test_rate": float(np.mean(rare_mask[split:])),
+        }
+        return X[:split], y[:split], X[split:], y[split:], "classification", metadata
     if kind == "outlier_signal":
         X, y = make_outlier_signal_noise(signal=True, random_state=seed)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.35, random_state=seed, stratify=y)
@@ -478,11 +495,87 @@ def _write_temporal_artifacts(output_dir: Path, rows: List[Dict[str, Any]]) -> N
         (output_dir / "temporal_drift_result_paragraph.md").write_text(paragraph + "\n", encoding="utf-8")
 
 
+def _case_study_audit_evidence(row: Dict[str, Any]) -> str:
+    if str(row.get("scaler", "")).lower() != "ranc":
+        return ""
+    fit_n = _format_int(row.get("ranc_fit_samples"))
+    monitors = _format_int(row.get("ranc_drift_monitors"))
+    ledger = _format_int(row.get("ranc_ledger_rows"))
+    rejected = _format_int(row.get("ranc_rejected_candidates"))
+    return f"train-only n={fit_n}; drift={monitors}; ledger={ledger}; rejected={rejected}"
+
+
+def _write_temporal_rare_event_artifacts(output_dir: Path, rows: List[Dict[str, Any]]) -> None:
+    table_rows: List[List[str]] = []
+    paper_rows = [
+        row
+        for row in rows
+        if str(row.get("scaler", "")).lower() in {"standard", "quantile", "selector", "ranc"}
+    ]
+    for row in paper_rows:
+        table_rows.append(
+            [
+                str(row["scaler"]),
+                _format_mean(row.get("auroc")),
+                _format_mean(row.get("rare_event_recall")),
+                str(row.get("selected_scaler", "")),
+                _case_study_audit_evidence(row),
+            ]
+        )
+    _write_table(
+        output_dir / "temporal_rare_event_table.md",
+        output_dir / "temporal_rare_event_table.tex",
+        [
+            "Scaler",
+            "AUROC",
+            "Rare recall",
+            "Selected",
+            "RANC audit evidence",
+        ],
+        table_rows,
+    )
+    ranc_rows = [row for row in rows if str(row["scaler"]).lower() == "ranc"]
+    if not ranc_rows:
+        return
+    row = ranc_rows[0]
+    paragraph = (
+        "In the temporal rare-event case study, RANC fit only the time-prefix training window "
+        f"({_format_int(row.get('ranc_fit_samples'))} samples), kept rare-event recall at "
+        f"{_format_mean(row.get('rare_event_recall'))}, emitted "
+        f"{_format_int(row.get('ranc_drift_monitors'))} drift monitors, recorded "
+        f"{_format_int(row.get('ranc_ledger_rows'))} signal-risk ledger rows, and rejected "
+        f"{_format_int(row.get('ranc_rejected_candidates'))} illegal or higher-risk candidates."
+    )
+    (output_dir / "temporal_rare_event_result_paragraph.md").write_text(paragraph + "\n", encoding="utf-8")
+    audit_lines = [
+        "# Temporal Rare-Event Case Study Audit",
+        "",
+        f"- Dataset kind: `{row.get('dataset_kind', '')}`",
+        f"- Split strategy: `{row.get('split_strategy', '')}`",
+        f"- Temporal leakage guard: `{row.get('temporal_leakage_guard', '')}`",
+        f"- RANC train-only fit: `{row.get('ranc_train_only_fit', '')}`",
+        f"- RANC fit samples: `{_format_int(row.get('ranc_fit_samples'))}`",
+        f"- RANC policies: `{row.get('ranc_policy_summary', '')}`",
+        f"- Signal-risk ledger rows: `{_format_int(row.get('ranc_ledger_rows'))}`",
+        f"- Rejected candidates: `{_format_int(row.get('ranc_rejected_candidates'))}`",
+        f"- Drift monitors: `{_format_int(row.get('ranc_drift_monitors'))}`",
+        f"- Max drift estimate: `{_format_mean(row.get('ranc_max_drift_estimate'))}`",
+        f"- Rare-event recall: `{_format_mean(row.get('rare_event_recall'))}`",
+        "",
+        "The case-study contract treats rare extremes as possible signal rather than corruption, "
+        "requires monotonic and invertible preprocessing, and uses time-ordered fit metadata so "
+        "the audit can verify that no future rows supplied fitted statistics.",
+    ]
+    (output_dir / "temporal_rare_event_audit.md").write_text("\n".join(audit_lines) + "\n", encoding="utf-8")
+
+
 def _write_benchmark_artifacts(output_dir: Path, dataset_kind: str, rows: List[Dict[str, Any]]) -> None:
     if dataset_kind == "sparse_classification":
         _write_sparse_artifacts(output_dir, rows)
     elif dataset_kind == "temporal_drift":
         _write_temporal_artifacts(output_dir, rows)
+    elif dataset_kind == "temporal_rare_event":
+        _write_temporal_rare_event_artifacts(output_dir, rows)
 
 
 def _selector_scaler(X_train, y_train, task: str, seed: int):
@@ -551,6 +644,8 @@ def run(config: Dict[str, Any]) -> Tuple[Path, Dict[str, Dict[str, float]]]:
         if task == "classification" and hasattr(pipe[-1], "predict_proba"):
             scores = pipe.predict_proba(X_test)[:, 1]
         metrics = _metrics(task, y_test, pred, scores)
+        if dataset_metadata.get("dataset_kind") == "temporal_rare_event":
+            metrics["rare_event_recall"] = float(recall_score(y_test, pred, zero_division=0))
         metrics["n_train"] = float(X_train.shape[0])
         metrics["n_test"] = float(X_test.shape[0])
         results[name] = metrics

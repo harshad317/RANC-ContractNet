@@ -13,9 +13,9 @@ The artifact supports these claims:
 - The sklearn transformer serializes fitted policies, regime cards, signal-risk
   ledger rows, drift monitors, rejected candidates, seeds, and falsification
   results.
-- Sparse, temporal, paired outlier, synthetic benchmark, ablation, and public
-  OpenML/UCI summary artifacts can be regenerated from the included code and
-  configs.
+- Sparse, temporal, temporal rare-event case-study, paired outlier, synthetic
+  benchmark, ablation, and public OpenML/UCI summary artifacts can be
+  regenerated from the included code and configs.
 - Public benchmark inclusion/exclusion metadata and paired RANC-baseline deltas
   are available as reviewer-readable artifacts.
 
@@ -49,8 +49,10 @@ aggregate metric. Reviewers should inspect no-op reasons and downgrades for
 underspecified contracts, wrong-contract controls and ledger rows for incorrect
 declared semantics, supervised label-use notes for rare-signal handling, drift
 monitor values for temporal shift, and paired predictive deltas alongside
-contract/audit pass rates. Neural adapter checks are smoke tests unless a larger
-neural benchmark is regenerated.
+contract/audit pass rates. The temporal rare-event case study should be checked
+for rare-recall behavior, train-prefix fitting, ledger rows, and rejected
+candidates. Neural adapter checks are smoke tests unless a larger neural
+benchmark is regenerated.
 
 ## Hardware and Software Assumptions
 
@@ -209,6 +211,8 @@ Expected outputs include:
 - `outputs/outlier_pair/contract_statistical_paragraph.md`
 - `outputs/sparse/sparse_table.tex`
 - `outputs/temporal_drift/temporal_drift_table.tex`
+- `outputs/case_studies/temporal_rare_event_table.tex`
+- `outputs/case_studies/temporal_rare_event_audit.md`
 - `outputs/ablations/ablation_table.tex`
 - `outputs/benchmark/benchmark_table.tex`
 

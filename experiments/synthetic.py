@@ -175,3 +175,47 @@ def make_temporal_drift(
     X[:, 0] += t / n_samples * 2.0
     y = 2.0 * X[:, 0] - X[:, 1] + rng.normal(scale=0.2, size=n_samples)
     return X, y, t
+
+
+def make_temporal_rare_event(
+    n_samples: int = 520,
+    random_state: int = 0,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Create a time-ordered rare-event classification case study.
+
+    The first feature acts like a drifting lab/risk measurement: most values are
+    ordinary positive readings, while rare extreme readings are predictive events
+    rather than corruptions. This gives the paper a compact domain-style setting
+    where temporal fit discipline and extreme-signal preservation are both
+    natural contract clauses.
+    """
+
+    rng = np.random.default_rng(random_state)
+    t = np.arange(n_samples)
+    drift = t / max(n_samples - 1, 1)
+    season = np.sin(2.0 * np.pi * t / 52.0)
+    baseline = rng.lognormal(mean=0.35 * drift, sigma=0.45, size=n_samples)
+    rare_mask = rng.random(n_samples) < (0.08 + 0.03 * (drift > 0.65))
+    lab_value = baseline.copy()
+    lab_value[rare_mask] *= rng.lognormal(mean=2.5, sigma=0.35, size=int(np.sum(rare_mask)))
+
+    feature_1 = rng.normal(size=n_samples) + 0.7 * season
+    feature_2 = rng.normal(size=n_samples) + 0.8 * drift
+    feature_3 = rng.binomial(1, 0.15 + 0.1 * drift, size=n_samples)
+    feature_4 = rng.normal(scale=0.5, size=n_samples)
+
+    tail_signal = np.log1p(lab_value)
+    tail_signal = (tail_signal - float(np.mean(tail_signal))) / (float(np.std(tail_signal)) + 1e-12)
+    logits = (
+        -3.2
+        + 1.6 * rare_mask.astype(float)
+        + 0.85 * tail_signal
+        + 0.45 * feature_3
+        + 0.2 * season
+        - 0.25 * feature_1
+    )
+    probabilities = 1.0 / (1.0 + np.exp(-logits))
+    y = (rng.random(n_samples) < probabilities).astype(int)
+    y[rare_mask & (rng.random(n_samples) < 0.55)] = 1
+    X = np.column_stack([lab_value, feature_1, feature_2, feature_3, feature_4])
+    return X, y, t, rare_mask

@@ -118,8 +118,9 @@ For a stronger conference submission, the remaining research work is:
 - Add more baseline families: common sklearn scalers, validation-selected
   selectors, leakage-prone anti-controls, and task-specific normalizers where
   relevant.
-- Add domain-style case studies where contract semantics are natural, especially
-  sparse features, temporal prediction, and rare-event tabular workflows.
+- Expand domain-style case studies beyond the included temporal rare-event
+  example, especially sparse features, temporal prediction, and regulated
+  tabular workflows.
 - Strengthen statistical reporting with preregistered metrics, paired tests,
   confidence intervals, and full seed/task tables.
 - Add a reviewer-visible adoption story: API example, audit-report example,

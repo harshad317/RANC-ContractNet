@@ -55,6 +55,8 @@ TIER_2 = TierSpec(
         Path("outputs/outlier_pair/contract_statistical_paragraph.md"),
         Path("outputs/sparse/sparse_table.tex"),
         Path("outputs/temporal_drift/temporal_drift_table.tex"),
+        Path("outputs/case_studies/temporal_rare_event_table.tex"),
+        Path("outputs/case_studies/temporal_rare_event_audit.md"),
         Path("outputs/ablations/ablation_table.tex"),
         Path("outputs/benchmark/benchmark_table.tex"),
     ],

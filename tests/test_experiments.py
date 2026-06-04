@@ -93,6 +93,51 @@ def test_temporal_runner_exports_drift_table(tmp_path):
     assert float(ranc["ranc_drift_monitors"]) == 5.0
 
 
+def test_temporal_rare_event_case_study_exports_artifacts(tmp_path):
+    output, _ = run(
+        {
+            "random_state": 0,
+            "output_dir": str(tmp_path),
+            "dataset": {"kind": "temporal_rare_event"},
+            "baselines": ["standard", "quantile", "selector", "ranc"],
+            "constraints": {
+                "global": {
+                    "hard_clauses": {
+                        "preserve_monotonicity": True,
+                        "allow_inverse_transform": True,
+                        "enforce_scale_invariance": True,
+                    },
+                    "soft_clauses": {"prefer_drift_monitor": 1.0},
+                },
+                "x0": {
+                    "hard_clauses": {
+                        "preserve_extreme_signal": True,
+                        "damp_outliers": False,
+                    },
+                    "forbidden_distortions": ["quantile_rank"],
+                    "transform_preferences": ["zscore", "maxabs"],
+                },
+            },
+        }
+    )
+    assert output.exists()
+    assert (tmp_path / "temporal_rare_event_table.md").exists()
+    assert (tmp_path / "temporal_rare_event_table.tex").exists()
+    assert (tmp_path / "temporal_rare_event_audit.md").exists()
+    assert (tmp_path / "temporal_rare_event_result_paragraph.md").exists()
+
+    rows = list(csv.DictReader(output.open("r", encoding="utf-8")))
+    ranc = next(row for row in rows if row["scaler"] == "ranc")
+    quantile = next(row for row in rows if row["scaler"] == "quantile")
+    assert ranc["split_strategy"] == "time_ordered"
+    assert ranc["temporal_leakage_guard"] == "True"
+    assert ranc["ranc_train_only_fit"] == "True"
+    assert float(ranc["ranc_fit_samples"]) == 364.0
+    assert float(ranc["ranc_ledger_rows"]) > 0.0
+    assert float(ranc["ranc_rejected_candidates"]) > 0.0
+    assert float(ranc["rare_event_recall"]) >= float(quantile["rare_event_recall"])
+
+
 def test_ablation_runner_exports_combined_table(tmp_path):
     summary_path, rows = run_ablation(
         {
@@ -195,6 +240,7 @@ def test_paper_results_runner_can_regenerate_selected_artifacts(tmp_path):
             "run_outlier_pair": False,
             "run_sparse": False,
             "run_temporal": False,
+            "run_case_study": False,
             "run_ablation": False,
             "benchmark_config": {
                 "seeds": [0],

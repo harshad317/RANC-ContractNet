@@ -23,6 +23,7 @@
 | Outlier signal/noise | Synthetic paired tasks | robust, clipping, quantile, no-op, standard | rare recall, AUROC, calibration |
 | Sparse | text/recommender matrices | no-op, maxabs, L1/L2, standard without mean | sparsity retention, memory, AUROC |
 | Temporal drift | time-ordered public data | train-only scalers, leakage sentinel, online scaler | forward quality, decay, drift alarms |
+| Temporal rare-event case study | synthetic domain-style sequence | standard, robust, quantile, validation selector, RANC | AUROC, rare recall, train-only audit |
 | Neural pilot | CIFAR/Tiny-ImageNet or small LM | BatchNorm, LayerNorm, RMSNorm, GroupNorm, DyT | accuracy/perplexity, stability, saturation |
 
 ## Audit Artifacts
@@ -150,6 +151,7 @@ evidence rather than as a universal predictive ranking.
 | Is this just AutoML or scaler selection? | No. RANC compiles the least complex legal policy under hard invariance contracts rather than searching scalers by validation score. | Method objective, Algorithm 1, validation-selector comparisons |
 | What if the contract is wrong? | RANC can preserve the wrong semantics; the artifact is designed to expose that through controls and ledgers. | wrong-contract paired controls, signal-risk ledger rows, failure-mode table |
 | Why can the validation selector beat RANC? | The selector optimizes held-out predictive score directly; RANC optimizes legality, auditability, and contract compliance. | OpenML paired deltas, claims boundary |
+| Where would someone use this? | In workflows where a preprocessing decision must preserve declared signal and prove train-prefix fit discipline. | temporal rare-event case study, audit summary |
 | Where is leakage protection? | Fit statistics are computed inside sklearn pipelines from the active training split only. | leakage tests, train-only audit fields, temporal prefix metadata |
 | Are neural results central? | No. Neural adapters are exploratory until backed by a larger neural benchmark. | torch smoke test, claims boundary |
 | Can the numbers be reproduced? | Yes through tiered reviewer commands and packaged checks; OpenML additionally depends on network availability. | `artifact_eval.md`, `reproducibility.md`, SHA256 bundle checks |
@@ -159,6 +161,22 @@ evidence rather than as a universal predictive ranking.
 The main paper uses a compact safety summary table for reviewer readability.
 The full generated sparse and temporal tables remain in the artifact paths
 below.
+
+The temporal rare-event case study is generated with:
+
+```bash
+python3 experiments/tabular_runner.py --config experiments/configs/case_study_temporal_rare_event.yaml
+```
+
+It exports:
+
+- `outputs/case_studies/metrics.csv`
+- `outputs/case_studies/temporal_rare_event_table.md`
+- `outputs/case_studies/temporal_rare_event_table.tex`
+- `outputs/case_studies/temporal_rare_event_audit.md`
+- `outputs/case_studies/temporal_rare_event_result_paragraph.md`
+- `outputs/case_studies/ranc_audit.json`
+- `outputs/case_studies/ranc_audit.md`
 
 The sparse safety table is generated with:
 

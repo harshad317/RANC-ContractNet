@@ -1,0 +1,987 @@
+{
+  "schema_version": "0.1.0",
+  "created_at": "2026-06-04T02:58:46+00:00",
+  "random_state": 0,
+  "transformer_type": "RANCDataTransformer",
+  "feature_names": [
+    "x0",
+    "x1",
+    "x2",
+    "x3",
+    "x4"
+  ],
+  "policies": [
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x0",
+      "feature_index": 0,
+      "policy_type": "zscore",
+      "parameters": {
+        "center": 2.4074748632163163,
+        "scale": 5.3100271778064405
+      },
+      "formula": "f(x)=(x-center)/scale",
+      "inverse_formula": "f^-1(z)=z*scale+center",
+      "inverse_legal": true,
+      "no_op": false,
+      "complexity": 2,
+      "audit_cost": 0.15,
+      "drift_monitor": {
+        "schema_version": "0.1.0",
+        "feature_name": "x0",
+        "statistic": "median",
+        "train_low": -29.05906724735091,
+        "train_high": 31.33768376497391,
+        "action": "warn",
+        "parameters": {
+          "train_median": 1.1393082588115,
+          "robust_scale": 0.6126380567435695,
+          "drift_estimate": 0.036348725489111965
+        }
+      },
+      "rejected_candidates": [
+        {
+          "feature_name": "x0",
+          "policy_type": "identity",
+          "reason": "scale invariance required",
+          "score": 0.0
+        },
+        {
+          "feature_name": "x0",
+          "policy_type": "maxabs",
+          "reason": "shift invariance required",
+          "score": 2.6
+        },
+        {
+          "feature_name": "x0",
+          "policy_type": "log1p",
+          "reason": "shift invariance required",
+          "score": 3.35
+        }
+      ],
+      "downgrade_reason": null,
+      "fitted_on_n_samples": 364,
+      "seed": 0,
+      "audit_notes": []
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x1",
+      "feature_index": 1,
+      "policy_type": "zscore",
+      "parameters": {
+        "center": 0.10896745389864068,
+        "scale": 1.1348915160477542
+      },
+      "formula": "f(x)=(x-center)/scale",
+      "inverse_formula": "f^-1(z)=z*scale+center",
+      "inverse_legal": true,
+      "no_op": false,
+      "complexity": 2,
+      "audit_cost": 0.15,
+      "drift_monitor": {
+        "schema_version": "0.1.0",
+        "feature_name": "x1",
+        "statistic": "median",
+        "train_low": -5.140318926995714,
+        "train_high": 5.245079781598803,
+        "action": "warn",
+        "parameters": {
+          "train_median": 0.05238042730154496,
+          "robust_scale": 1.1879925087558003,
+          "drift_estimate": 0.018998357696326493
+        }
+      },
+      "rejected_candidates": [
+        {
+          "feature_name": "x1",
+          "policy_type": "identity",
+          "reason": "scale invariance required",
+          "score": 0.0
+        },
+        {
+          "feature_name": "x1",
+          "policy_type": "maxabs",
+          "reason": "shift invariance required",
+          "score": 1.05
+        }
+      ],
+      "downgrade_reason": null,
+      "fitted_on_n_samples": 364,
+      "seed": 0,
+      "audit_notes": []
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x2",
+      "feature_index": 2,
+      "policy_type": "zscore",
+      "parameters": {
+        "center": 0.16967044030552825,
+        "scale": 1.059588314153964
+      },
+      "formula": "f(x)=(x-center)/scale",
+      "inverse_formula": "f^-1(z)=z*scale+center",
+      "inverse_legal": true,
+      "no_op": false,
+      "complexity": 2,
+      "audit_cost": 0.15,
+      "drift_monitor": {
+        "schema_version": "0.1.0",
+        "feature_name": "x2",
+        "statistic": "median",
+        "train_low": -4.300468822892126,
+        "train_high": 4.71877030881824,
+        "action": "warn",
+        "parameters": {
+          "train_median": 0.2091507429630562,
+          "robust_scale": 1.0844175939696166,
+          "drift_estimate": 0.24465953034384746
+        }
+      },
+      "rejected_candidates": [
+        {
+          "feature_name": "x2",
+          "policy_type": "identity",
+          "reason": "scale invariance required",
+          "score": 0.0
+        },
+        {
+          "feature_name": "x2",
+          "policy_type": "maxabs",
+          "reason": "shift invariance required",
+          "score": 1.05
+        }
+      ],
+      "downgrade_reason": null,
+      "fitted_on_n_samples": 364,
+      "seed": 0,
+      "audit_notes": []
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "feature_index": 3,
+      "policy_type": "robust_affine",
+      "parameters": {
+        "center": 0.0,
+        "scale": 0.40644487931663587
+      },
+      "formula": "f(x)=(x-center)/scale",
+      "inverse_formula": "f^-1(z)=z*scale+center",
+      "inverse_legal": true,
+      "no_op": false,
+      "complexity": 2,
+      "audit_cost": 0.2,
+      "drift_monitor": {
+        "schema_version": "0.1.0",
+        "feature_name": "x3",
+        "statistic": "median",
+        "train_low": -1.6257795172665435,
+        "train_high": 1.6257795172665435,
+        "action": "warn",
+        "parameters": {
+          "train_median": 0.0,
+          "robust_scale": 0.40644487931663587,
+          "drift_estimate": 0.0
+        }
+      },
+      "rejected_candidates": [
+        {
+          "feature_name": "x3",
+          "policy_type": "identity",
+          "reason": "scale invariance required",
+          "score": 0.0
+        },
+        {
+          "feature_name": "x3",
+          "policy_type": "maxabs",
+          "reason": "outlier damping required",
+          "score": 2.6
+        },
+        {
+          "feature_name": "x3",
+          "policy_type": "zscore",
+          "reason": "zero preservation required",
+          "score": 2.15
+        },
+        {
+          "feature_name": "x3",
+          "policy_type": "minmax",
+          "reason": "outlier damping required",
+          "score": 2.2
+        },
+        {
+          "feature_name": "x3",
+          "policy_type": "piecewise_affine",
+          "reason": "zero preservation required",
+          "score": 5.8
+        }
+      ],
+      "downgrade_reason": null,
+      "fitted_on_n_samples": 364,
+      "seed": 0,
+      "audit_notes": []
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x4",
+      "feature_index": 4,
+      "policy_type": "zscore",
+      "parameters": {
+        "center": -0.03367716966389579,
+        "scale": 0.47407389523205307
+      },
+      "formula": "f(x)=(x-center)/scale",
+      "inverse_formula": "f^-1(z)=z*scale+center",
+      "inverse_legal": true,
+      "no_op": false,
+      "complexity": 2,
+      "audit_cost": 0.15,
+      "drift_monitor": {
+        "schema_version": "0.1.0",
+        "feature_name": "x4",
+        "statistic": "median",
+        "train_low": -2.133621614668216,
+        "train_high": 2.032417834727753,
+        "action": "warn",
+        "parameters": {
+          "train_median": -0.05060188997023182,
+          "robust_scale": 0.4688457185546323,
+          "drift_estimate": 0.030946985676356148
+        }
+      },
+      "rejected_candidates": [
+        {
+          "feature_name": "x4",
+          "policy_type": "identity",
+          "reason": "scale invariance required",
+          "score": 0.0
+        },
+        {
+          "feature_name": "x4",
+          "policy_type": "maxabs",
+          "reason": "shift invariance required",
+          "score": 1.05
+        }
+      ],
+      "downgrade_reason": null,
+      "fitted_on_n_samples": 364,
+      "seed": 0,
+      "audit_notes": []
+    }
+  ],
+  "cards": [
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x0",
+      "feature_index": 0,
+      "n_samples": 364,
+      "missing_fraction": 0.0,
+      "zero_fraction": 0.0,
+      "positive_fraction": 1.0,
+      "negative_fraction": 0.0,
+      "sparse": false,
+      "bounded_low": null,
+      "bounded_high": null,
+      "robust_location": 1.1393082588115,
+      "robust_scale": 0.6126380567435695,
+      "mean": 2.4074748632163163,
+      "std": 5.3100271778064405,
+      "min": 0.22465518572911505,
+      "max": 42.26246897716642,
+      "q01": 0.369367664197633,
+      "q25": 0.8282849887167929,
+      "q50": 1.1393082588115,
+      "q75": 1.6547337272638682,
+      "q99": 30.567743170360043,
+      "skewness": 5.095830963009983,
+      "tail_category": "heavy_tail",
+      "sign_pattern": "nonnegative",
+      "drift_estimate": 0.036348725489111965,
+      "batch_reliability": 1.0,
+      "covariance_relevance": false,
+      "distance_sensitivity": true,
+      "interpretability_required": false,
+      "inverse_required": true,
+      "confidence": 1.0,
+      "notes": []
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x1",
+      "feature_index": 1,
+      "n_samples": 364,
+      "missing_fraction": 0.0,
+      "zero_fraction": 0.0,
+      "positive_fraction": 0.5137362637362637,
+      "negative_fraction": 0.48626373626373626,
+      "sparse": false,
+      "bounded_low": null,
+      "bounded_high": null,
+      "robust_location": 0.05238042730154496,
+      "robust_scale": 1.1879925087558003,
+      "mean": 0.10896745389864068,
+      "std": 1.1348915160477542,
+      "min": -2.995002779864729,
+      "max": 3.4692741786831878,
+      "q01": -2.4824343456779427,
+      "q25": -0.6529084994252495,
+      "q50": 0.05238042730154496,
+      "q75": 0.949693394886325,
+      "q99": 2.7102650086193156,
+      "skewness": 0.084100932705041,
+      "tail_category": "stable",
+      "sign_pattern": "mixed",
+      "drift_estimate": 0.018998357696326493,
+      "batch_reliability": 1.0,
+      "covariance_relevance": false,
+      "distance_sensitivity": true,
+      "interpretability_required": false,
+      "inverse_required": true,
+      "confidence": 1.0,
+      "notes": []
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x2",
+      "feature_index": 2,
+      "n_samples": 364,
+      "missing_fraction": 0.0,
+      "zero_fraction": 0.0,
+      "positive_fraction": 0.5631868131868132,
+      "negative_fraction": 0.4368131868131868,
+      "sparse": false,
+      "bounded_low": null,
+      "bounded_high": null,
+      "robust_location": 0.2091507429630562,
+      "robust_scale": 1.0844175939696166,
+      "mean": 0.16967044030552825,
+      "std": 1.059588314153964,
+      "min": -2.909499568639395,
+      "max": 2.950175594818163,
+      "q01": -2.071241792447857,
+      "q25": -0.5598118008949666,
+      "q50": 0.2091507429630562,
+      "q75": 0.903067533370046,
+      "q99": 2.4383777734073258,
+      "skewness": -0.029498635349715394,
+      "tail_category": "stable",
+      "sign_pattern": "mixed",
+      "drift_estimate": 0.24465953034384746,
+      "batch_reliability": 1.0,
+      "covariance_relevance": false,
+      "distance_sensitivity": true,
+      "interpretability_required": false,
+      "inverse_required": true,
+      "confidence": 1.0,
+      "notes": []
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "feature_index": 3,
+      "n_samples": 364,
+      "missing_fraction": 0.0,
+      "zero_fraction": 0.7912087912087912,
+      "positive_fraction": 0.2087912087912088,
+      "negative_fraction": 0.0,
+      "sparse": false,
+      "bounded_low": 0.0,
+      "bounded_high": 1.0,
+      "robust_location": 0.0,
+      "robust_scale": 0.40644487931663587,
+      "mean": 0.2087912087912088,
+      "std": 0.4070043357126469,
+      "min": 0.0,
+      "max": 1.0,
+      "q01": 0.0,
+      "q25": 0.0,
+      "q50": 0.0,
+      "q75": 0.0,
+      "q99": 1.0,
+      "skewness": 1.432955886655068,
+      "tail_category": "heavy_tail",
+      "sign_pattern": "nonnegative",
+      "drift_estimate": 0.0,
+      "batch_reliability": 1.0,
+      "covariance_relevance": false,
+      "distance_sensitivity": true,
+      "interpretability_required": false,
+      "inverse_required": true,
+      "confidence": 1.0,
+      "notes": [
+        "empirical [0, 1] boundedness detected"
+      ]
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x4",
+      "feature_index": 4,
+      "n_samples": 364,
+      "missing_fraction": 0.0,
+      "zero_fraction": 0.0,
+      "positive_fraction": 0.4835164835164835,
+      "negative_fraction": 0.5164835164835165,
+      "sparse": false,
+      "bounded_low": null,
+      "bounded_high": null,
+      "robust_location": -0.05060188997023182,
+      "robust_scale": 0.4688457185546323,
+      "mean": -0.03367716966389579,
+      "std": 0.47407389523205307,
+      "min": -1.505725037681474,
+      "max": 1.4862871463163676,
+      "q01": -1.0310831403914862,
+      "q25": -0.33642021577396103,
+      "q50": -0.05060188997023182,
+      "q75": 0.2960526585562379,
+      "q99": 1.051936584306498,
+      "skewness": 0.028401859363679272,
+      "tail_category": "stable",
+      "sign_pattern": "mixed",
+      "drift_estimate": 0.030946985676356148,
+      "batch_reliability": 1.0,
+      "covariance_relevance": false,
+      "distance_sensitivity": true,
+      "interpretability_required": false,
+      "inverse_required": true,
+      "confidence": 1.0,
+      "notes": []
+    }
+  ],
+  "contracts": [
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x0",
+      "group_name": null,
+      "hard_clauses": {
+        "preserve_monotonicity": true,
+        "allow_inverse_transform": true,
+        "preserve_zero": false,
+        "preserve_sign": false,
+        "avoid_batch_dependence": true,
+        "enforce_scale_invariance": true,
+        "enforce_shift_invariance": true,
+        "damp_outliers": false,
+        "preserve_extreme_signal": true
+      },
+      "soft_clauses": {
+        "prefer_low_complexity": 1.0,
+        "prefer_interpretability": 0.3,
+        "preserve_extreme_signal": 0.5,
+        "prefer_drift_monitor": 1.0
+      },
+      "forbidden_distortions": [
+        "quantile_rank"
+      ],
+      "transform_preferences": [
+        "zscore",
+        "maxabs"
+      ],
+      "metadata": {},
+      "seed": 0,
+      "audit_notes": [
+        "default contract derived for model_family=linear",
+        "user overrides applied"
+      ]
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x1",
+      "group_name": null,
+      "hard_clauses": {
+        "preserve_monotonicity": true,
+        "allow_inverse_transform": true,
+        "preserve_zero": false,
+        "preserve_sign": false,
+        "avoid_batch_dependence": true,
+        "enforce_scale_invariance": true,
+        "enforce_shift_invariance": true
+      },
+      "soft_clauses": {
+        "prefer_low_complexity": 1.0,
+        "prefer_interpretability": 0.3,
+        "prefer_drift_monitor": 1.0
+      },
+      "forbidden_distortions": [],
+      "transform_preferences": [],
+      "metadata": {},
+      "seed": 0,
+      "audit_notes": [
+        "default contract derived for model_family=linear",
+        "user overrides applied"
+      ]
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x2",
+      "group_name": null,
+      "hard_clauses": {
+        "preserve_monotonicity": true,
+        "allow_inverse_transform": true,
+        "preserve_zero": false,
+        "preserve_sign": false,
+        "avoid_batch_dependence": true,
+        "enforce_scale_invariance": true,
+        "enforce_shift_invariance": true
+      },
+      "soft_clauses": {
+        "prefer_low_complexity": 1.0,
+        "prefer_interpretability": 0.3,
+        "prefer_drift_monitor": 1.0
+      },
+      "forbidden_distortions": [],
+      "transform_preferences": [],
+      "metadata": {},
+      "seed": 0,
+      "audit_notes": [
+        "default contract derived for model_family=linear",
+        "user overrides applied"
+      ]
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "group_name": null,
+      "hard_clauses": {
+        "preserve_monotonicity": true,
+        "allow_inverse_transform": true,
+        "preserve_zero": true,
+        "preserve_sign": false,
+        "avoid_batch_dependence": true,
+        "enforce_scale_invariance": true,
+        "damp_outliers": true
+      },
+      "soft_clauses": {
+        "prefer_low_complexity": 1.0,
+        "prefer_interpretability": 0.3,
+        "preserve_extreme_signal": 0.5,
+        "prefer_semantic_bounds": 0.8,
+        "prefer_drift_monitor": 1.0
+      },
+      "forbidden_distortions": [],
+      "transform_preferences": [],
+      "metadata": {},
+      "seed": 0,
+      "audit_notes": [
+        "default contract derived for model_family=linear",
+        "user overrides applied"
+      ]
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x4",
+      "group_name": null,
+      "hard_clauses": {
+        "preserve_monotonicity": true,
+        "allow_inverse_transform": true,
+        "preserve_zero": false,
+        "preserve_sign": false,
+        "avoid_batch_dependence": true,
+        "enforce_scale_invariance": true,
+        "enforce_shift_invariance": true
+      },
+      "soft_clauses": {
+        "prefer_low_complexity": 1.0,
+        "prefer_interpretability": 0.3,
+        "prefer_drift_monitor": 1.0
+      },
+      "forbidden_distortions": [],
+      "transform_preferences": [],
+      "metadata": {},
+      "seed": 0,
+      "audit_notes": [
+        "default contract derived for model_family=linear",
+        "user overrides applied"
+      ]
+    }
+  ],
+  "ledger_rows": [
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x0",
+      "proposed_nuisance": "heavy_tail_or_extreme_values",
+      "possible_signal_removed": "rare predictive tail events",
+      "evidence": "top-tail label mean shift=2.973 standard deviations",
+      "severity": 1.0,
+      "confidence": 1.0,
+      "mitigation": "forbid_clipping_and_quantile_saturation",
+      "falsification_test": "outlier_signal_preservation",
+      "supervised_label_used": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "proposed_nuisance": "heavy_tail_or_extreme_values",
+      "possible_signal_removed": "rare predictive tail events",
+      "evidence": "top-tail label mean shift=0.162 standard deviations",
+      "severity": 0.081103829935809,
+      "confidence": 1.0,
+      "mitigation": "prefer_rank_preserving_or_piecewise_policy",
+      "falsification_test": "outlier_signal_preservation",
+      "supervised_label_used": true
+    }
+  ],
+  "falsification_results": [
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x0",
+      "policy_type": "zscore",
+      "test_name": "monotonicity",
+      "passed": true,
+      "severity": 0.0,
+      "message": "monotone on quantile probes",
+      "metrics": {
+        "min_diff": 0.0013260962350447603,
+        "used_z3": false
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x0",
+      "policy_type": "zscore",
+      "test_name": "inverse_transform_error",
+      "passed": true,
+      "severity": 0.0,
+      "message": "inverse round-trip within tolerance",
+      "metrics": {
+        "max_error": 2.220446049250313e-16
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x0",
+      "policy_type": "zscore",
+      "test_name": "outlier_signal_preservation",
+      "passed": true,
+      "severity": 0.0,
+      "message": "extreme signal is not rank-saturated",
+      "metrics": {},
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x0",
+      "policy_type": "zscore",
+      "test_name": "drift_monitor_training_bounds",
+      "passed": true,
+      "severity": 0.0,
+      "message": "training median lies inside monitor bounds",
+      "metrics": {
+        "median": 1.1393082588115,
+        "train_low": -29.05906724735091,
+        "train_high": 31.33768376497391
+      },
+      "hard_clause": false
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x1",
+      "policy_type": "zscore",
+      "test_name": "monotonicity",
+      "passed": true,
+      "severity": 0.0,
+      "message": "monotone on quantile probes",
+      "metrics": {
+        "min_diff": 0.018028481449353984,
+        "used_z3": false
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x1",
+      "policy_type": "zscore",
+      "test_name": "inverse_transform_error",
+      "passed": true,
+      "severity": 0.0,
+      "message": "inverse round-trip within tolerance",
+      "metrics": {
+        "max_error": 2.220446049250313e-16
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x1",
+      "policy_type": "zscore",
+      "test_name": "drift_monitor_training_bounds",
+      "passed": true,
+      "severity": 0.0,
+      "message": "training median lies inside monitor bounds",
+      "metrics": {
+        "median": 0.05238042730154496,
+        "train_low": -5.140318926995714,
+        "train_high": 5.245079781598803
+      },
+      "hard_clause": false
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x2",
+      "policy_type": "zscore",
+      "test_name": "monotonicity",
+      "passed": true,
+      "severity": 0.0,
+      "message": "monotone on quantile probes",
+      "metrics": {
+        "min_diff": 0.014305143676913601,
+        "used_z3": false
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x2",
+      "policy_type": "zscore",
+      "test_name": "inverse_transform_error",
+      "passed": true,
+      "severity": 0.0,
+      "message": "inverse round-trip within tolerance",
+      "metrics": {
+        "max_error": 2.220446049250313e-16
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x2",
+      "policy_type": "zscore",
+      "test_name": "drift_monitor_training_bounds",
+      "passed": true,
+      "severity": 0.0,
+      "message": "training median lies inside monitor bounds",
+      "metrics": {
+        "median": 0.2091507429630562,
+        "train_low": -4.300468822892126,
+        "train_high": 4.71877030881824
+      },
+      "hard_clause": false
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "policy_type": "robust_affine",
+      "test_name": "zero_preservation",
+      "passed": true,
+      "severity": 0.0,
+      "message": "f(0)=0",
+      "metrics": {},
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "policy_type": "robust_affine",
+      "test_name": "monotonicity",
+      "passed": true,
+      "severity": 0.0,
+      "message": "monotone on quantile probes",
+      "metrics": {
+        "min_diff": 2.4603582204832315,
+        "used_z3": false
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "policy_type": "robust_affine",
+      "test_name": "inverse_transform_error",
+      "passed": true,
+      "severity": 0.0,
+      "message": "inverse round-trip within tolerance",
+      "metrics": {
+        "max_error": 0.0
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "policy_type": "robust_affine",
+      "test_name": "sparse_densification",
+      "passed": true,
+      "severity": 0.0,
+      "message": "policy preserves implicit zeros",
+      "metrics": {},
+      "hard_clause": false
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "policy_type": "robust_affine",
+      "test_name": "outlier_noise_damping",
+      "passed": true,
+      "severity": 0.0,
+      "message": "tail span is damped or scaled",
+      "metrics": {
+        "raw_tail_span": 1.0,
+        "transformed_tail_span": 2.4603582204832315
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x3",
+      "policy_type": "robust_affine",
+      "test_name": "drift_monitor_training_bounds",
+      "passed": true,
+      "severity": 0.0,
+      "message": "training median lies inside monitor bounds",
+      "metrics": {
+        "median": 0.0,
+        "train_low": -1.6257795172665435,
+        "train_high": 1.6257795172665435
+      },
+      "hard_clause": false
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x4",
+      "policy_type": "zscore",
+      "test_name": "monotonicity",
+      "passed": true,
+      "severity": 0.0,
+      "message": "monotone on quantile probes",
+      "metrics": {
+        "min_diff": 0.015002572265113312,
+        "used_z3": false
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x4",
+      "policy_type": "zscore",
+      "test_name": "inverse_transform_error",
+      "passed": true,
+      "severity": 0.0,
+      "message": "inverse round-trip within tolerance",
+      "metrics": {
+        "max_error": 1.1102230246251565e-16
+      },
+      "hard_clause": true
+    },
+    {
+      "schema_version": "0.1.0",
+      "feature_name": "x4",
+      "policy_type": "zscore",
+      "test_name": "drift_monitor_training_bounds",
+      "passed": true,
+      "severity": 0.0,
+      "message": "training median lies inside monitor bounds",
+      "metrics": {
+        "median": -0.05060188997023182,
+        "train_low": -2.133621614668216,
+        "train_high": 2.032417834727753
+      },
+      "hard_clause": false
+    }
+  ],
+  "rejected_candidates": [
+    {
+      "feature_name": "x0",
+      "policy_type": "identity",
+      "reason": "scale invariance required",
+      "score": 0.0
+    },
+    {
+      "feature_name": "x0",
+      "policy_type": "maxabs",
+      "reason": "shift invariance required",
+      "score": 2.6
+    },
+    {
+      "feature_name": "x0",
+      "policy_type": "log1p",
+      "reason": "shift invariance required",
+      "score": 3.35
+    },
+    {
+      "feature_name": "x1",
+      "policy_type": "identity",
+      "reason": "scale invariance required",
+      "score": 0.0
+    },
+    {
+      "feature_name": "x1",
+      "policy_type": "maxabs",
+      "reason": "shift invariance required",
+      "score": 1.05
+    },
+    {
+      "feature_name": "x2",
+      "policy_type": "identity",
+      "reason": "scale invariance required",
+      "score": 0.0
+    },
+    {
+      "feature_name": "x2",
+      "policy_type": "maxabs",
+      "reason": "shift invariance required",
+      "score": 1.05
+    },
+    {
+      "feature_name": "x3",
+      "policy_type": "identity",
+      "reason": "scale invariance required",
+      "score": 0.0
+    },
+    {
+      "feature_name": "x3",
+      "policy_type": "maxabs",
+      "reason": "outlier damping required",
+      "score": 2.6
+    },
+    {
+      "feature_name": "x3",
+      "policy_type": "zscore",
+      "reason": "zero preservation required",
+      "score": 2.15
+    },
+    {
+      "feature_name": "x3",
+      "policy_type": "minmax",
+      "reason": "outlier damping required",
+      "score": 2.2
+    },
+    {
+      "feature_name": "x3",
+      "policy_type": "piecewise_affine",
+      "reason": "zero preservation required",
+      "score": 5.8
+    },
+    {
+      "feature_name": "x4",
+      "policy_type": "identity",
+      "reason": "scale invariance required",
+      "score": 0.0
+    },
+    {
+      "feature_name": "x4",
+      "policy_type": "maxabs",
+      "reason": "shift invariance required",
+      "score": 1.05
+    }
+  ],
+  "warnings": [],
+  "metadata": {
+    "n_samples_fit": 364,
+    "n_features_in": 5,
+    "model_family": null,
+    "dataset_kind": "temporal_rare_event",
+    "split_strategy": "time_ordered",
+    "train_start_index": 0,
+    "train_end_index": 363,
+    "test_start_index": 364,
+    "test_end_index": 519,
+    "temporal_leakage_guard": true,
+    "rare_event_train_rate": 0.10164835164835165,
+    "rare_event_test_rate": 0.15384615384615385,
+    "rare_extreme_test_rate": 0.14102564102564102
+  }
+}

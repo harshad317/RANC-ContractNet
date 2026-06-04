@@ -15,10 +15,11 @@ fetch/run failures are written to `outputs/openml/openml_task_metadata.csv` and
 public datasets are fetched at runtime and are not packaged.
 
 Primary metrics are fixed before reporting: paired outlier-noise uses corruption
-AUROC, paired outlier-signal uses rare-positive recall, public binary
-classification uses AUROC when available, other classification uses accuracy,
-and regression uses RMSE. Sparse and temporal checks report predictive metrics
-plus audit diagnostics.
+AUROC, paired outlier-signal uses rare-positive recall, the temporal rare-event
+case study uses AUROC and rare-event recall, public binary classification uses
+AUROC when available, other classification uses accuracy, and regression uses
+RMSE. Sparse and temporal checks report predictive metrics plus audit
+diagnostics.
 
 Before reporting paper-facing numbers, regenerate the matching tier:
 
@@ -60,6 +61,7 @@ This regenerates the paired outlier tables imported by `main.tex`:
 ```bash
 python3 experiments/tabular_runner.py --config experiments/configs/sparse.yaml
 python3 experiments/tabular_runner.py --config experiments/configs/temporal_drift.yaml
+python3 experiments/tabular_runner.py --config experiments/configs/case_study_temporal_rare_event.yaml
 ```
 
 These regenerate the sparse and temporal tables imported by `main.tex`:
@@ -68,6 +70,8 @@ These regenerate the sparse and temporal tables imported by `main.tex`:
 - `outputs/sparse/sparse_result_paragraph.md`
 - `outputs/temporal_drift/temporal_drift_table.tex`
 - `outputs/temporal_drift/temporal_drift_result_paragraph.md`
+- `outputs/case_studies/temporal_rare_event_table.tex`
+- `outputs/case_studies/temporal_rare_event_audit.md`
 
 ```bash
 python3 experiments/ablation_runner.py --config experiments/configs/ablation.yaml

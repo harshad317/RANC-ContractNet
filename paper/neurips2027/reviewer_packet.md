@@ -155,7 +155,8 @@ Completed in this pass:
 
 Still recommended before a conference submission:
 
-- Add at least one domain-style case study with natural contracts.
+- Expand beyond the first temporal rare-event case study with additional
+  domain-style cases where contracts are natural.
 - Expand the public benchmark suite with preregistered tasks and retained
   exclusion metadata.
 - Add a short API/audit-report example if page budget permits.
